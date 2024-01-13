@@ -8,6 +8,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
+import java.util.ArrayList;
 
 public class WordleFX extends Application {
 
@@ -22,16 +23,19 @@ public class WordleFX extends Application {
 	public static boolean checkWord(String userName) {
 		// Processing 
 		String keyword = "";
-		allUserNames
+		String line; 
+		ArrayList<String> allWordleWords = new ArrayList();
+		
+		
 		
 		
 		// Processing 
 		try {
-			FileReader wordFile = new FileReader("data/wordlewords");
+			FileReader wordFile = new FileReader("data/wordleWords");
 			BufferedReader fileReader = new BufferedReader(wordFile);
 			
-			while (fileReader.readLine() != null) {
-				
+			while ((line = fileReader.readLine()) != null) {
+				allWordleWords.add(line);
 			}
 			
 			

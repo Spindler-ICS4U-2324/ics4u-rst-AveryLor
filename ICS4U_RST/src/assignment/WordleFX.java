@@ -9,8 +9,25 @@ import java.util.ArrayList;
 
 public class WordleFX {
 
-	public static void wordClean(String userGuess, int numGuesses, Square[][] userBoard) {
-
+	public static void wordClean(String wordleGuess, Square[][] userBoard, int numCol, int numGuesses) {
+		if (checkWord(wordleGuess, userBoard, numCol, numGuesses)) {
+		} else {
+			// Get all the unique characters of the guess
+			ArrayList<Character> uniqueChar = uniqueCharacters(wordleGuess);
+			
+			// Processing 
+			for (int i = 0; i < numCol; i++) {
+				if (userBoard[numGuesses - 1][i].getValue() != Square.GREEN) {
+					for (int j = 0; j < uniqueChar.size(); j++) {
+						if (wordleGuess.charAt(i) == uniqueChar.get(j)) {
+							userBoard[numGuesses - 1][i].setYellow(); 
+						} else {
+							userBoard[numGuesses - 1][i].setGray();
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public static boolean checkWord(String wordleGuess, Square[][] userBoard, int numCol, int numGuesses) {
@@ -55,7 +72,32 @@ public class WordleFX {
 			return false;
 		}
 	}
-
+	
+	public static ArrayList<Character> uniqueCharacters(String wordleGuess) {
+		// Variables 
+		ArrayList<Character> uniqueChars = new ArrayList<Character>();
+		
+		// Processing 
+		for (int i = 0; i < wordleGuess.length(); i++) {
+			char currentChar = wordleGuess.charAt(i); 
+			
+			// Check if the character is not in the uniqueChars list 
+			if (!uniqueChars.contains(currentChar)) {
+				uniqueChars.add(currentChar);
+			}
+		}
+		return uniqueChars; 
+	}
+	
+	public static void clearBoard(int numCol, int numRow, Square[][] userBoard) {
+		for (int i = 0; i < numRow; i++) {
+			for (int j = 0; j < numCol; j++) {
+				userBoard[i][j].clear();
+			}
+		}
+	}
+	
+	
 	/**
 	 * Generates a random integer between two specified values, inclusive.
 	 *

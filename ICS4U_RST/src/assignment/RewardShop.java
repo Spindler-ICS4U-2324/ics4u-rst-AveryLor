@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class PointsRecorder {
+public class RewardShop {
     private FileReader accountFile; // Used to access the file 
     private BufferedReader accountReader; // Used to read from the file 
     private int points; // Keeps track of points 
@@ -24,7 +24,7 @@ public class PointsRecorder {
     /**
      * Constructor. Initializes an ArrayList that holds all of the accounts.  
      */
-    public PointsRecorder() {
+    public RewardShop() {
         accountList = new ArrayList<Account>();
     }
 
@@ -104,6 +104,12 @@ public class PointsRecorder {
     				temp.setAccountIndex(temp.getAccountIndex() - 1); //Reduce its index by 1
     			}
     		}
+    	}
+    }
+    
+    public void incLoyaltyPoints(boolean win, int accountIndex) {
+    	if (true) {
+    		
     	}
     }
     

@@ -17,7 +17,6 @@ import java.io.FileReader;
 public class RewardShop {
     private FileReader accountFile; // Used to access the file 
     private BufferedReader accountReader; // Used to read from the file 
-    private int points; // Keeps track of points 
     private ArrayList<Account> accountList; // ArrayList/data structure containing all of the Account instances 
     private static final int BONUS_FIELD = 5000; 
 
@@ -108,8 +107,11 @@ public class RewardShop {
     }
     
     public void incLoyaltyPoints(boolean win, int accountIndex) {
-    	if (true) {
-    		
+    	Account currentAccount = accountList.get(accountIndex);
+    	if (win == true) {
+    		currentAccount.setPoints(currentAccount.getPoints() + 100);
+    	} else {
+    		currentAccount.setPoints(currentAccount.getPoints() + 50);
     	}
     }
     

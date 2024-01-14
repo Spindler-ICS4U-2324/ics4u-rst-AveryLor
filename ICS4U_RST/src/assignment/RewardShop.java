@@ -9,6 +9,8 @@ package assignment;
 
 
 import java.util.ArrayList;
+
+
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -20,6 +22,13 @@ public class RewardShop {
     private ArrayList<Account> accountList; // ArrayList/data structure containing all of the Account instances 
     private static final int BONUS_FIELD = 5000; 
 
+    private ShopItems rewardItems;
+
+    public enum ShopItems {
+      GiftCard, Coffee, Newspaper
+    }
+    
+    
     /**
      * Constructor. Initializes an ArrayList that holds all of the accounts.  
      */

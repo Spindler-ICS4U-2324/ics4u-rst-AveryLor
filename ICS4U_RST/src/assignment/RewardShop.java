@@ -20,7 +20,6 @@ public class RewardShop {
     private FileReader accountFile; // Used to access the file 
     private BufferedReader accountReader; // Used to read from the file 
     private ArrayList<Account> accountList; // ArrayList/data structure containing all of the Account instances 
-    private static final int BONUS_FIELD = 5000; 
 
     private ShopItems rewardItems;
 
@@ -90,30 +89,6 @@ public class RewardShop {
         }
     }
 
-    
-    /**
-     * Removes an account from the data structure.
-     *
-     * @param accountIndex 
-     * 		The index of the account to be removed
-     * 
-     * @throws IllegalArgumentException
-     * 		If the user enters an account index that is not associated with a current 
-     * 		account index then force the reprompt. 
-     * 		
-     */
-    public void removeAccount(int accountIndex) {
-    	if (accountIndex > accountList.size() || accountIndex < 1) { // If the account to be removed is not an actual account then force reprompt for valid data 
-    		throw new IllegalArgumentException("Enter a valid account index.");
-    	} else {
-    		accountList.remove(accountIndex - 1); // The account index is one greater than the actual index 
-    		for (Account temp : accountList) { // Once one account is removed, change the account indexes of the other accounts 
-    			if(accountIndex < temp.getAccountIndex()) { // For all accounts greater than that position
-    				temp.setAccountIndex(temp.getAccountIndex() - 1); //Reduce its index by 1
-    			}
-    		}
-    	}
-    }
     
     public void incLoyaltyPoints(boolean win, int accountIndex) {
     	Account currentAccount = accountList.get(accountIndex);

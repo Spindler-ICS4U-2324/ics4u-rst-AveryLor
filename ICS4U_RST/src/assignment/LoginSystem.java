@@ -15,16 +15,29 @@ public class LoginSystem {
 	}
 
 	public boolean checkCredentials(String password, String username, int accountIndex) {
-		String line; 
+		String nameLine; 
+		boolean validUserName, validPassword; 
+		ArrayList<String> allUserNames = new ArrayList<String>(); 
 		
 		try {
 			FileReader wordFile = new FileReader("data/accountDB");
 			BufferedReader fileReader = new BufferedReader(wordFile);
 			
-			while (line = fileReader.readLine() != null) {
-				
+			while ((nameLine = fileReader.readLine()) != null) {
+				allUserNames.add(nameLine); 
+				fileReader.readLine(); 
 			}
-			
+			// Convert ArrayList<String> to Array
+	        String[] userNameArray = allUserNames.toArray(new String[0]);
+	        
+	        validUserName = findUserName(userNameArray, username, 0, userNameArray.length); 
+	        validPassword = accountList.get(accountIndex).getPassword().equals(password);
+
+	        if (validUserName == true && validPassword == true) {
+	        	return true; 
+	        }
+	     
+			fileReader.close();
 			// Error Checking
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -32,7 +45,9 @@ public class LoginSystem {
 			a.printStackTrace();
 		}
 		
-		return true;
+		
+		
+		return false;
 	}
 
 	public boolean findUserName(String[] allUserNames, String searchName, int left, int right) {

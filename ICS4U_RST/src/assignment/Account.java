@@ -72,7 +72,7 @@ public class Account {
      * @return 
      * 		The last name.
      */
-	public String getPasswrod() {
+	public String getPassword() {
 		return userPassword; 
 	}
 	
@@ -95,7 +95,7 @@ public class Account {
 	public int getAccountIndex() {
 		return accountIndex; 
 	}
-	
+ 	
 	public void setPoints(int userPoints) {
 		this.userPoints = userPoints;
 	}
@@ -103,4 +103,6 @@ public class Account {
 	public int getPoints() {
 		return userPoints; 
 	}
+	
+	
 }

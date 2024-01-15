@@ -6,16 +6,13 @@ import javafx.scene.image.ImageView;
 
 public class Square extends Button {
 
-	private static final Image imgX = new Image(Square.class.getResource("/images/X.jpg").toString());
-	private static final Image imgO = new Image(Square.class.getResource("/images/O.jpg").toString());
+	// Images 
+	private static final Image IMG_BLANK = new Image(Square.class.getResource("/images/cardback.jpg").toString());
+	private static final Image IMG_GREEN = new Image(Square.class.getResource("/images/green.png").toString());
+	private static final Image IMG_YELLOW = new Image(Square.class.getResource("/images/yellow.png").toString());
+	private static final Image IMG_GRAY = new Image(Square.class.getResource("/images/gray.png").toString());
 
-	private static final Image imgBLANK = new Image(Square.class.getResource("/images/cardback.jpg").toString());
-	public static final Image imgGREEN = new Image(Square.class.getResource("/images/green.png").toString());
-	public static final Image imgYELLOW = new Image(Square.class.getResource("/images/yellow.png").toString());
-	public static final Image imgGRAY = new Image(Square.class.getResource("/images/gray.png").toString());
-
-	public static final char X = 'X';
-	public static final char O = 'O';
+	// Corresponding values for the images 
 	public static final char BLANK = ' ';
 	public static final char GREEN = 'G';
 	public static final char YELLOW = 'Y';
@@ -26,19 +23,7 @@ public class Square extends Button {
 	public Square() {
 		super();
 		value = BLANK;
-		setGraphic(new ImageView(imgBLANK));
-	}
-
-	public void playSquare(char val) {
-		value = val;
-		switch (value) {
-		case X:
-			setGraphic(new ImageView(imgX));
-			break;
-		case O:
-			setGraphic(new ImageView(imgO));
-			break;
-		}
+		setGraphic(new ImageView(IMG_BLANK));
 	}
 
 	public char getValue() {
@@ -47,22 +32,22 @@ public class Square extends Button {
 	
 	public void clear() {
 	    value = BLANK; // Reset the value to BLANK
-	    setGraphic(new ImageView(imgBLANK)); // Set the graphic to the blank image
+	    setGraphic(new ImageView(IMG_BLANK)); // Set the graphic to the blank image
 	}
 	
 	public void setGreen() {
 		value = GREEN; // Set the value of the image to green 
-		setGraphic(new ImageView(imgGREEN));
+		setGraphic(new ImageView(IMG_GREEN));
 	}
 	
 	public void setYellow() {
 		value = YELLOW; // Set the value of the image to yellow 
-		setGraphic(new ImageView(imgYELLOW));
+		setGraphic(new ImageView(IMG_YELLOW));
 	}
 	
 	public void setGray() {
 		value = GRAY; // Set the value of the image to gray 
-		setGraphic(new ImageView(imgGRAY));
+		setGraphic(new ImageView(IMG_GRAY));
 	}
 	
 	

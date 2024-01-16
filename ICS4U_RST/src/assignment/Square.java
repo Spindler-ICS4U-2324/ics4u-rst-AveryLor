@@ -25,6 +25,18 @@ public class Square extends Button {
 		value = BLANK;
 		setGraphic(new ImageView(IMG_BLANK));
 	}
+	
+	public void playSquare(char val) {
+		value = val;
+		switch (value) {
+		case GREEN:
+			setGraphic(new ImageView(IMG_GREEN));
+			break;
+		case YELLOW:
+			setGraphic(new ImageView(IMG_YELLOW));
+			break;
+		}
+	}
 
 	public char getValue() {
 		return value;
@@ -50,6 +62,10 @@ public class Square extends Button {
 		setGraphic(new ImageView(IMG_GRAY));
 	}
 	
-	
-
+	public void setBlank() {
+		value = BLANK;
+		setGraphic(new ImageView(IMG_BLANK));
+			
+		
+	}
 }

@@ -1,18 +1,16 @@
 package assignment;
 
-import java.awt.TextField;
-
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField; 
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.scene.Scene;
 
 public class NYTimesFX extends Application {
 
@@ -25,6 +23,7 @@ public class NYTimesFX extends Application {
 	// JavaFX elements
 	private Label lblTitle, lblUsername, lblPassword;
 	private TextField txtUsername, txtPassword; 
+	private Button btnSubmit; 
 	
 	@Override
 	public void start(Stage myStage) throws Exception {
@@ -44,20 +43,26 @@ public class NYTimesFX extends Application {
 		txtUsername.setFont(Font.font(FONT));
 		root.add(txtUsername, 1, 1);
 		
+		txtPassword = new TextField();
+		txtPassword.setFont(Font.font(FONT));
+		root.add(txtPassword, 1, 2);
+		
+		btnSubmit = new Button();
+		btnSubmit.setFont(Font.font(FONT));
+		btnSubmit.setText("Submit");
+		root.add(btnSubmit, 1, 3);
+		
 		lblUsername = new Label(); 
 		lblUsername.setFont(Font.font(FONT));
 		lblUsername.setText("Username:");
 		root.add(lblUsername, 0, 1, 1, 1);
 		GridPane.setHalignment(lblUsername, HPos.LEFT);
 		
-		
-		
 		lblPassword = new Label(); 
 		lblPassword.setFont(Font.font(FONT));
 		lblPassword.setText("Password:");
 		root.add(lblPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblPassword,  HPos.LEFT);
-		
 
 		Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 		myStage.setTitle("NYTimesFX");
@@ -65,6 +70,18 @@ public class NYTimesFX extends Application {
 		myStage.show();
 		
 	}
+	
+	private void checkCredentials() {
+		String userName = txtUsername.getText();
+		String userPassword = txtPassword.getText(); 
+		
+		
+		
+		
+	}
+	
+	
+	
 	
 	public static void main(String[] args) {
 		launch(args);

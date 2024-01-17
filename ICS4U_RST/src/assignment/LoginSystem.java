@@ -11,7 +11,19 @@ public class LoginSystem {
 	private ArrayList<Account> accountList;
 
 	public LoginSystem() {
-
+		try {
+			FileReader wordFile = new FileReader("data/accountDB");
+			BufferedReader fileReader = new BufferedReader(wordFile);
+			fileReader.close();
+			
+			// Error Checking
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException a) {
+			a.printStackTrace();
+		
+		}
+		
 	}
 
 	public boolean checkCredentials(String password, String username, int accountIndex) {

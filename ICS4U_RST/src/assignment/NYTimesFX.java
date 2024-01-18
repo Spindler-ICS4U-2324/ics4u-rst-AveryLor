@@ -102,11 +102,56 @@ public class NYTimesFX extends Application {
 
 	    Label lblHome = new Label();
 	    lblHome.setFont(Font.font(FONT));
-	    lblHome.setText("Welcome to the Home Page!");
+	    lblHome.setText("NYTimes");
 	    homeRoot.add(lblHome, 0, 0, 1, 1);
 	    GridPane.setHalignment(lblHome, HPos.LEFT);
+	    
+	    // Button to move to the Wordle game
+	    Button btnWordleGame = new Button(); 
+	    btnWordleGame.setFont(Font.font(FONT));
+	    btnWordleGame.setText("Wordle");
+	    btnWordleGame.setOnAction(event -> myStage.setScene(getWordleScene()));
+	    homeRoot.add(btnWordleGame, 0, 0, 1, 10);
 
 	    return new Scene(homeRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
+	
+	private Scene getWordleScene() {
+		GridPane wordleRoot = new GridPane();
+	    wordleRoot.setHgap(GAP);
+	    wordleRoot.setVgap(GAP);
+	    wordleRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
+	    wordleRoot.setAlignment(Pos.CENTER);
+
+	    Label lblHome = new Label();
+	    lblHome.setFont(Font.font(FONT));
+	    lblHome.setText("Wordle");
+	    wordleRoot.add(lblHome, 0, 0, 1, 1);
+	    GridPane.setHalignment(lblHome, HPos.LEFT);
+	    
+	    Button btnReturnHome = new Button(); 
+	    btnReturnHome.setFont(Font.font(FONT));
+	    btnReturnHome.setText("Return Home");
+	    btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
+	    wordleRoot.add(btnReturnHome, 0, 0, 1, 10);
+	    
+	    box = new Square[3][3];
+		for (int row = 0; row <= 2; row++) {
+			for (int col = 0; col <= 2; col++) {
+				box[row][col] = new Square();
+				wordleRoot.add(box[row][col], col, row);
+			}
+		}
+		
+		Label lblResult = new Label();
+		lblResult.setFont(Font.font(FONT));
+		wordleRoot.add(lblResult, 0, 3, 3, 1);
+		GridPane.setHalignment(lblResult, HPos.CENTER);
+
+
+		
+	    
+	    return new Scene(wordleRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
 	private void showAlert(AlertType alertType, String title, String message) {
@@ -122,54 +167,14 @@ public class NYTimesFX extends Application {
 	}
 }
 		
-		// Page 2 display
-		/*
-		GridPane root = new GridPane();
-		root.setHgap(GAP);
-		root.setVgap(GAP);
-		root.setPadding(new Insets(GAP, GAP, GAP, GAP));
-		root.setAlignment(Pos.CENTER);
-		
-		box = new Square[3][3];
-		for (int row = 0; row <= 2; row++) {
-			for (int col = 0; col <= 2; col++) {
-				box[row][col] = new Square();
-				root.add(box[row][col], col, row);
-			}
-		}
-		
-		lblResult = new Label();
-		lblResult.setFont(Font.font(FONT));
-		root.add(lblResult, 0, 3, 3, 1);
-		GridPane.setHalignment(lblResult, HPos.CENTER);
 
-		Button btnReset = new Button("Reset");
-		btnReset.setFont(Font.font(FONT));
-		root.add(btnReset, 0, 3, 2, 3);
-		btnReset.setOnAction(event -> resetGame());
-		
-		Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
-		myStage.setTitle("NYTimesFX");
-		myStage.setScene(scene);
-		myStage.show();
 		
 		
-	}
 	
-	private void resetGame() {
-		for (int row = 0; row <= 2; row++) {
-			for (int col = 0; col <= 2; col++) {
-				box[row][col].clear();
-			}
-		}
-		lblResult.setText("");
-	}
+
 	
 	
 	
 	
 
 
-}
-
-*/

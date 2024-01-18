@@ -7,7 +7,7 @@ import javafx.scene.image.ImageView;
 public class Square extends Button {
 
 	// Images 
-	private static final Image IMG_BLANK = new Image(Square.class.getResource("/images/cardback.jpg").toString());
+	private static final Image IMG_BLANK = new Image(Square.class.getResource("/images/blank.png").toString());
 	private static final Image IMG_GREEN = new Image(Square.class.getResource("/images/green.png").toString());
 	private static final Image IMG_YELLOW = new Image(Square.class.getResource("/images/yellow.png").toString());
 	private static final Image IMG_GRAY = new Image(Square.class.getResource("/images/gray.png").toString());

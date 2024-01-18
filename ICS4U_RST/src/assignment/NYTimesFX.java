@@ -11,6 +11,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 
 public class NYTimesFX extends Application {
 
@@ -18,7 +21,10 @@ public class NYTimesFX extends Application {
 	private static final int FONT = 20;
 	private static final int SCREEN_WIDTH = 400;
 	private static final int SCREEN_HEIGHT = 500;
+	private LoginSystem loginCheck = new LoginSystem();
 	private Square[][] box;
+	private Stage myStage; 
+	
 	
 	// JavaFX elements
 	private Label lblTitle, lblUsername, lblPassword;
@@ -27,6 +33,9 @@ public class NYTimesFX extends Application {
 	
 	@Override
 	public void start(Stage myStage) throws Exception {
+		
+		this.myStage = myStage;
+		
 		GridPane root = new GridPane();
 		root.setHgap(GAP);
 		root.setVgap(GAP);
@@ -50,6 +59,7 @@ public class NYTimesFX extends Application {
 		btnSubmit = new Button();
 		btnSubmit.setFont(Font.font(FONT));
 		btnSubmit.setText("Submit");
+		btnSubmit.setOnAction(event -> checkCredentials());
 		root.add(btnSubmit, 1, 3);
 		
 		lblUsername = new Label(); 
@@ -63,7 +73,7 @@ public class NYTimesFX extends Application {
 		lblPassword.setText("Password:");
 		root.add(lblPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblPassword,  HPos.LEFT);
-
+		
 		Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 		myStage.setTitle("NYTimesFX");
 		myStage.setScene(scene);
@@ -72,16 +82,40 @@ public class NYTimesFX extends Application {
 	}
 	
 	private void checkCredentials() {
-		String userName = txtUsername.getText();
-		String userPassword = txtPassword.getText(); 
-		
-		
-		
-		
+	    String username = txtUsername.getText();
+	    String password = txtPassword.getText();
+	    
+
+	    if (loginCheck.checkCredentials(password, username)) {
+	        myStage.setScene(getHomeScene());
+	    } else {
+	        showAlert(AlertType.ERROR, "Invalid Credentials", "Please enter a valid username and password.");
+	    }
 	}
-	
-	
-	
+
+	private Scene getHomeScene() {
+	    GridPane homeRoot = new GridPane();
+	    homeRoot.setHgap(GAP);
+	    homeRoot.setVgap(GAP);
+	    homeRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
+	    homeRoot.setAlignment(Pos.CENTER);
+
+	    Label lblHome = new Label();
+	    lblHome.setFont(Font.font(FONT));
+	    lblHome.setText("Welcome to the Home Page!");
+	    homeRoot.add(lblHome, 0, 0, 1, 1);
+	    GridPane.setHalignment(lblHome, HPos.LEFT);
+
+	    return new Scene(homeRoot, SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
+
+	private void showAlert(AlertType alertType, String title, String message) {
+	    Alert alert = new Alert(alertType);
+	    alert.setTitle(title);
+	    alert.setHeaderText(null);
+	    alert.setContentText(message);
+	    alert.showAndWait();
+	}
 	
 	public static void main(String[] args) {
 		launch(args);

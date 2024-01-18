@@ -45,7 +45,7 @@ public class Account {
 	/**
      * Sets the userName of the account holder.
      */
-	public void setUserName(String userName) {
+	public void setUsername(String userName) {
 		this.username = userName; 
 	}
 	
@@ -55,7 +55,7 @@ public class Account {
      * @return 
      * 		The first name.
      */
-	public String getUserName() {
+	public String getUsername() {
 		return username;
 	}
 	

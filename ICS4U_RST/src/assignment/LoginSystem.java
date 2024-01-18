@@ -11,55 +11,42 @@ public class LoginSystem {
 	private ArrayList<Account> accountList;
 
 	public LoginSystem() {
-		try {
-			FileReader wordFile = new FileReader("data/accountDB");
-			BufferedReader fileReader = new BufferedReader(wordFile);
-			fileReader.close();
-			
-			// Error Checking
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException a) {
-			a.printStackTrace();
-		
-		}
-		
+		accountList = new ArrayList<Account>();
+	    ArrayList<String> names = new ArrayList<>();
+	    ArrayList<String> passwords = new ArrayList<>();
+	    
+	    try {
+	        BufferedReader reader = new BufferedReader(new FileReader("data/accountDB"));
+	        String line;
+	        
+	        while ((line = reader.readLine()) != null) {
+	            names.add(line);
+	            passwords.add(reader.readLine());
+	        }
+	        
+	        reader.close();
+	        
+	        // Error Checking
+	    } catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	    } catch (IOException a) {
+	        a.printStackTrace();
+	    }
+	    
+	    for (int i = 0; i < names.size(); i++) {
+	        Account currentAccount = new Account(names.get(i), passwords.get(i));
+	        currentAccount.setAccountIndex(i + 1);
+	        accountList.add(currentAccount);
+	    }
 	}
 
-	public boolean checkCredentials(String password, String username, int accountIndex) {
-		String nameLine; 
-		boolean validUserName, validPassword; 
-		ArrayList<String> allUserNames = new ArrayList<String>(); 
-		
-		try {
-			FileReader wordFile = new FileReader("data/accountDB");
-			BufferedReader fileReader = new BufferedReader(wordFile);
-			
-			while ((nameLine = fileReader.readLine()) != null) {
-				allUserNames.add(nameLine); 
-				fileReader.readLine(); 
-			}
-			// Convert ArrayList<String> to Array
-	        String[] userNameArray = allUserNames.toArray(new String[0]);
-	        
-	        validUserName = findUserName(userNameArray, username, 0, userNameArray.length); 
-	        validPassword = accountList.get(accountIndex).getPassword().equals(password);
-
-	        if (validUserName == true && validPassword == true) {
-	        	return true; 
+	public boolean checkCredentials(String password, String username) {
+	    for (Account account : accountList) {
+	        if (account.getUsername().equals(username) && account.getPassword().equals(password)) {
+	            return true;
 	        }
-	     
-			fileReader.close();
-			// Error Checking
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException a) {
-			a.printStackTrace();
-		}
-		
-		
-		
-		return false;
+	    }
+	    return false;
 	}
 
 	public boolean findUserName(String[] allUserNames, String searchName, int left, int right) {
@@ -79,4 +66,6 @@ public class LoginSystem {
 			return findUserName(allUserNames, searchName, middle + 1, right); // check the right side
 		}
 	}
+	
+
 }

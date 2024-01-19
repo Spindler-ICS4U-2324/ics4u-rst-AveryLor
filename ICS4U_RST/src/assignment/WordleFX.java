@@ -8,15 +8,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class WordleFX {
+	
+	private static final int LENGTH = 6; 
+	private static final int HEIGHT = 5; 
 
-	public static void wordClean(String wordleGuess, Square[][] userBoard, int numCol, int numGuesses) {
-		if (checkWord(wordleGuess, userBoard, numCol, numGuesses)) {
+
+	public static void wordClean(String wordleGuess, Square[][] userBoard, int numGuesses) {
+		if (checkWord(wordleGuess, userBoard, LENGTH)) {
 		} else {
 			// Get all the unique characters of the guess
 			ArrayList<Character> uniqueChar = uniqueCharacters(wordleGuess);
 			
 			// Processing 
-			for (int i = 0; i < numCol; i++) {
+			for (int i = 0; i < LENGTH; i++) {
 				if (userBoard[numGuesses - 1][i].getValue() != Square.GREEN) {
 					for (int j = 0; j < uniqueChar.size(); j++) {
 						if (wordleGuess.charAt(i) == uniqueChar.get(j)) {
@@ -30,7 +34,7 @@ public class WordleFX {
 		}
 	}
 
-	public static boolean checkWord(String wordleGuess, Square[][] userBoard, int numCol, int numGuesses) {
+	public static boolean checkWord(String wordleGuess, Square[][] userBoard, int numGuesses) {
 		// Processing
 		String keyWord = "";
 		String line;
@@ -58,10 +62,10 @@ public class WordleFX {
 		randNum = randomNumber(0, allWordleWords.size() - 1);
 		keyWord = allWordleWords.get(randNum);
 
-		for (int i = 0; i < numCol; i++) {
+		for (int i = 0; i < LENGTH; i++) {
 			if (wordleGuess.charAt(i) == keyWord.charAt(i)) {
 				counter += 1; 
-				userBoard[numCol][numGuesses].setGreen();
+				userBoard[i][numGuesses].setGreen();
 			}
 		}
 
@@ -90,13 +94,37 @@ public class WordleFX {
 	}
 	
 	public static void clearBoard(int numCol, int numRow, Square[][] userBoard) {
-		for (int i = 0; i < numRow; i++) {
-			for (int j = 0; j < numCol; j++) {
-				userBoard[i][j].clear();
+		for (int row = 0; row < numRow; row++) {
+			for (int col = 0; col < numCol; col++) {
+				userBoard[row][col] = new Square();
+				userBoard[row][col].setLetter(Square.BLANK); // Initialize letter as a blank space
 			}
 		}
 	}
 	
+	
+	public static boolean isRowFull(int row, Square[][] wordleBoard) {
+	    int counter = 0; 
+		for (int col = 0; col < LENGTH; col++) {
+	        if (wordleBoard[row][col].getLetter() != Square.BLANK) {
+	            counter += 1; 
+	        }
+	    }
+		if (counter == 5) {
+			return true; 
+		} else {
+			return false;
+		}
+	}
+	
+	public static String interpretUserGuess(int row, Square[][] wordleBoard) {
+		String wordleWord = ""; 
+		for (int col = 0; col < LENGTH; col++) {
+			wordleWord += wordleBoard[row][col].getValue();
+		}
+		return wordleWord;
+
+	}
 	
 	/**
 	 * Generates a random integer between two specified values, inclusive.

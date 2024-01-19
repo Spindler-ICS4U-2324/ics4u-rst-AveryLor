@@ -19,18 +19,23 @@ public class Square extends Button {
 
 	// Corresponding values for the images
 	public static final char BLANK = ' ';
-	public static final char GREEN = '&';
-	public static final char YELLOW = '*';
-	public static final char GRAY = '(';
+	
+	public static final int BLANK_VALUE = 0; 
+	public static final int YELLOW_VALUE = 1; 
+	public static final int GREEN_VALUE = 2; 
+	public static final int GRAY_VALUE = 3; 
+
 	
 	// Fields
 
 	private Label letterLabel;
 
-	private char value;
+	private char letter;
+	private int value; 
 
 	public Square() {
-		value = BLANK; 
+		value = BLANK_VALUE; 
+		letter = BLANK; 
 		// Create a StackPane to hold the imageView and letterLabel
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
@@ -49,12 +54,12 @@ public class Square extends Button {
 	}
 
 
-	public char getValue() {
+	public int getValue() {
 		return value;
 	}
 
 	public void clear() {
-		value = BLANK; // Reset the value to BLANK
+		letter = BLANK; // Reset the value to BLANK
 		
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
@@ -75,8 +80,7 @@ public class Square extends Button {
 	}
 
 	public void setGreen() {
-		value = GREEN; // Set the value of the image to green
-		
+		value = GREEN_VALUE; 
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
 
@@ -87,6 +91,7 @@ public class Square extends Button {
 
 		letterLabel = new Label();
 		letterLabel.setFont(Font.font(FONT));
+		letterLabel.setText(String.valueOf(letter));
 
 		// Add the ImageView and Label to the StackPane
 		stackPane.getChildren().addAll(imageView, letterLabel);
@@ -96,49 +101,46 @@ public class Square extends Button {
 	}
 
 	public void setYellow() {
-		value = YELLOW; // Set the value of the image to yellow
-		
+		value = YELLOW_VALUE; 
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
 
 		// Create the ImageView and Label
-		ImageView imageView = new ImageView(IMG_BLANK);
+		ImageView imageView = new ImageView(IMG_YELLOW);
 		imageView.setFitWidth(90);
 		imageView.setFitHeight(90);
 
 		letterLabel = new Label();
 		letterLabel.setFont(Font.font(FONT));
+		letterLabel.setText(String.valueOf(letter));
 
 		// Add the ImageView and Label to the StackPane
 		stackPane.getChildren().addAll(imageView, letterLabel);
 		setGraphic(stackPane);
-		
-		setGraphic(new ImageView(IMG_YELLOW));
 	}
 
 	public void setGray() {
-		value = GRAY; // Set the value of the image to gray
 		
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
 
 		// Create the ImageView and Label
-		ImageView imageView = new ImageView(IMG_BLANK);
+		ImageView imageView = new ImageView(IMG_GRAY);
 		imageView.setFitWidth(90);
 		imageView.setFitHeight(90);
 
 		letterLabel = new Label();
 		letterLabel.setFont(Font.font(FONT));
+		letterLabel.setText(String.valueOf(letter));
 
 		// Add the ImageView and Label to the StackPane
 		stackPane.getChildren().addAll(imageView, letterLabel);
 		setGraphic(stackPane);
 		
-		setGraphic(new ImageView(IMG_GRAY));
 	}
 
 	public void setBlank() {
-		value = BLANK;
+		letter = BLANK;
 		
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
@@ -150,6 +152,7 @@ public class Square extends Button {
 
 		letterLabel = new Label();
 		letterLabel.setFont(Font.font(FONT));
+		letterLabel.setText(String.valueOf(letter));
 
 		// Add the ImageView and Label to the StackPane
 		stackPane.getChildren().addAll(imageView, letterLabel);
@@ -160,12 +163,12 @@ public class Square extends Button {
 	}
 
 	public void setLetter(char value) {
-		this.value = value; 
+		this.letter = value; 
 		letterLabel.setText(String.valueOf(value));
 	}
 	
 	public char getLetter() {
-		return value; 
+		return letter; 
 	}
 	
  }

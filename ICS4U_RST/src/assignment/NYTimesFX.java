@@ -38,6 +38,7 @@ public class NYTimesFX extends Application {
 	private Button btnSubmit;
 	
 	private static int numGuesses = 0; 
+	private static int numFullGuesses = 0; 
 
 	@Override
 	public void start(Stage myStage) throws Exception {
@@ -82,6 +83,8 @@ public class NYTimesFX extends Application {
 		root.add(lblPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblPassword, HPos.LEFT);
 
+		
+		
 		Scene scene = new Scene(root, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
 		myStage.setTitle("NYTimesFX");
 		myStage.setScene(scene);
@@ -138,9 +141,6 @@ public class NYTimesFX extends Application {
 				wordleRoot.add(box[row][col], col, row);
 			}
 		}
-		
-		
-		WordleFX.clearBoard(LENGTH, HEIGHT, box);
 
 		Button btnReturnHome = new Button();
 		btnReturnHome.setFont(Font.font(SMALL_FONT));
@@ -156,22 +156,20 @@ public class NYTimesFX extends Application {
 	}
 
 	private void handleKeyStroke(KeyEvent event) {
+		numGuesses++; 
 		String wordleWord; 
 		
 		char character = event.getCode().toString().charAt(0);
 		for (int row = 0; row < HEIGHT; row++) {
 			for (int col = 0; col < LENGTH; col++) {
-				
-				
-				
-
 				if (box[row][col].getLetter() == Square.BLANK) {
 					box[row][col].setLetter(character);
 					
 					if (numGuesses % 5 == 0) {
-						if (WordleFX.isRowFull(numGuesses, box)) {
+						numFullGuesses++; 
+						if (WordleFX.isRowFull(numFullGuesses - 1, box)) {
 							wordleWord = WordleFX.interpretUserGuess(numGuesses, box); 
-							WordleFX.checkWord(wordleWord, box, col);
+							WordleFX.wordClean(wordleWord, box, numFullGuesses - 1);
 						}
 						
 					}

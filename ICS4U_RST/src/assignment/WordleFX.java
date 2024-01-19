@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class WordleFX {
 	
-	private static final int LENGTH = 6; 
-	private static final int HEIGHT = 5; 
+	private static final int LENGTH = 5; 
+	private static final int HEIGHT = 6; 
 
 
 	public static void wordClean(String wordleGuess, Square[][] userBoard, int numGuesses) {
@@ -21,12 +21,12 @@ public class WordleFX {
 			
 			// Processing 
 			for (int i = 0; i < LENGTH; i++) {
-				if (userBoard[numGuesses - 1][i].getValue() != Square.GREEN) {
+				if (userBoard[numGuesses][i].getValue() != Square.GREEN_VALUE) {
 					for (int j = 0; j < uniqueChar.size(); j++) {
 						if (wordleGuess.charAt(i) == uniqueChar.get(j)) {
-							userBoard[numGuesses - 1][i].setYellow(); 
+							userBoard[numGuesses][i].setYellow(); 
 						} else {
-							userBoard[numGuesses - 1][i].setGray();
+							userBoard[numGuesses][i].setGray();
 						}
 					}
 				}
@@ -103,10 +103,10 @@ public class WordleFX {
 	}
 	
 	
-	public static boolean isRowFull(int row, Square[][] wordleBoard) {
+	public static boolean isRowFull(int numGuesses, Square[][] wordleBoard) {
 	    int counter = 0; 
 		for (int col = 0; col < LENGTH; col++) {
-	        if (wordleBoard[row][col].getLetter() != Square.BLANK) {
+	        if (wordleBoard[numGuesses][col].getLetter() != Square.BLANK) {
 	            counter += 1; 
 	        }
 	    }

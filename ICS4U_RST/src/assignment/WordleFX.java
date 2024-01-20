@@ -10,37 +10,91 @@ import java.util.ArrayList;
 public class WordleFX {
 	
 	private static final int LENGTH = 5; 
-	private static final int HEIGHT = 6; 
 
 
-	public static void wordClean(String wordleGuess, Square[][] userBoard, int numGuesses) {
-		if (checkWord(wordleGuess, userBoard, LENGTH)) {
+	public static void wordClean(Square[][] userBoard, int numGuesses) {
+		String wordleGuess = interpretUserGuess(numGuesses, userBoard);
+		if (checkWord(wordleGuess, userBoard, numGuesses)) {
 		} else {
 			// Get all the unique characters of the guess
 			ArrayList<Character> uniqueChar = uniqueCharacters(wordleGuess);
+
+			// Convert the ArrayList of characters to an array of characters
+			Character[] uniqueCharArray = uniqueChar.toArray(new Character[uniqueChar.size()]);
+			for (int i = 0; i < uniqueCharArray.length; i++) {
+				uniqueCharArray[i] = uniqueChar.get(i); 
+			}
+			
 			
 			// Processing 
-			for (int i = 0; i < LENGTH; i++) {
-				if (userBoard[numGuesses][i].getValue() != Square.GREEN_VALUE) {
-					for (int j = 0; j < uniqueChar.size(); j++) {
-						if (wordleGuess.charAt(i) == uniqueChar.get(j)) {
-							userBoard[numGuesses][i].setYellow(); 
-						} else {
-							userBoard[numGuesses][i].setGray();
-						}
-					}
-				}
+//			for (int col = 0; col < LENGTH; col++) {
+//				if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) {
+//					
+//					for (int j = 0; j < uniqueChar.size(); j++) {
+//						if (wordleGuess.charAt(col) == uniqueChar.get(j)) {
+//							userBoard[numGuesses][col].setYellow(); 
+//						} else {
+//							userBoard[numGuesses][col].setGray();
+//						}
+//					}
+//				}
+//			}
+			
+			for (int col = 0; col < LENGTH; col++) {
+			    if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) {
+			        boolean isInWord = false;
+			        for (int j = 0; j < uniqueCharArray.length; j++) {
+			            if (wordleGuess.charAt(col) == uniqueCharArray[j]) {
+			                isInWord = true;
+			                break;
+			            }
+			        }
+			        if (isInWord) {
+			            for (int j = 0; j < uniqueChar.size(); j++) {
+			                if (wordleGuess.charAt(col) == uniqueChar.get(j)) {
+			                    userBoard[numGuesses][col].setYellow(); 
+			                    break;
+			                }
+			            }
+			        } else {
+			            userBoard[numGuesses][col].setGray();
+			        }
+			    }
 			}
 		}
 	}
 
 	public static boolean checkWord(String wordleGuess, Square[][] userBoard, int numGuesses) {
 		// Processing
-		String keyWord = "";
-		String line;
-		int randNum;
+		String keyword = "";
 		int counter = 0;
+		
+		//keyword = generateKeyWord(); 
+
+		keyword = "plane"; 
+		
+		for (int col = 0; col < LENGTH; col++) {
+			if (Character.toUpperCase(wordleGuess.charAt(col)) == Character.toUpperCase(keyword.charAt(col))) {
+				userBoard[numGuesses][col].setGreen();
+				counter += 1; 
+
+			}
+		}
+
+		// Processing
+		if (counter == 5) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static String generateKeyWord() {
+		int randNum;
+		String keyword, line; 
+		
 		ArrayList<String> allWordleWords = new ArrayList<String>();
+		
 
 		// Processing
 		try {
@@ -58,23 +112,12 @@ public class WordleFX {
 		} catch (IOException a) {
 			a.printStackTrace();
 		}
+		
 		// Processing
 		randNum = randomNumber(0, allWordleWords.size() - 1);
-		keyWord = allWordleWords.get(randNum);
-
-		for (int i = 0; i < LENGTH; i++) {
-			if (wordleGuess.charAt(i) == keyWord.charAt(i)) {
-				counter += 1; 
-				userBoard[i][numGuesses].setGreen();
-			}
-		}
-
-		// Processing
-		if (counter == 5) {
-			return true;
-		} else {
-			return false;
-		}
+		keyword = allWordleWords.get(randNum);
+		
+		return keyword; 
 	}
 	
 	public static ArrayList<Character> uniqueCharacters(String wordleGuess) {
@@ -102,25 +145,28 @@ public class WordleFX {
 		}
 	}
 	
-	
-	public static boolean isRowFull(int numGuesses, Square[][] wordleBoard) {
-	    int counter = 0; 
+	public static boolean isRowFull(int numGuesses, Square[][] userBoard) {
+		int counter = 0; 
 		for (int col = 0; col < LENGTH; col++) {
-	        if (wordleBoard[numGuesses][col].getLetter() != Square.BLANK) {
-	            counter += 1; 
-	        }
-	    }
+			if (userBoard[numGuesses][col].getLetter() != Square.BLANK) {
+				counter += 1; 
+			}
+		}
+		
 		if (counter == 5) {
 			return true; 
 		} else {
-			return false;
+			return false; 
 		}
 	}
 	
-	public static String interpretUserGuess(int row, Square[][] wordleBoard) {
+	
+
+	
+	public static String interpretUserGuess(int numGuesses, Square[][] wordleBoard) {
 		String wordleWord = ""; 
 		for (int col = 0; col < LENGTH; col++) {
-			wordleWord += wordleBoard[row][col].getValue();
+			wordleWord += wordleBoard[numGuesses][col].getLetter();
 		}
 		return wordleWord;
 

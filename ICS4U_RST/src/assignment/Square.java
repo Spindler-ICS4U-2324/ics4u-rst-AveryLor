@@ -85,7 +85,7 @@ public class Square extends Button {
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
 
 		// Create the ImageView and Label
-		ImageView imageView = new ImageView(IMG_BLANK);
+		ImageView imageView = new ImageView(IMG_GREEN);
 		imageView.setFitWidth(90);
 		imageView.setFitHeight(90);
 
@@ -95,9 +95,9 @@ public class Square extends Button {
 
 		// Add the ImageView and Label to the StackPane
 		stackPane.getChildren().addAll(imageView, letterLabel);
+		
 		setGraphic(stackPane);
 		
-		setGraphic(new ImageView(IMG_GREEN));
 	}
 
 	public void setYellow() {
@@ -162,9 +162,9 @@ public class Square extends Button {
 
 	}
 
-	public void setLetter(char value) {
-		this.letter = value; 
-		letterLabel.setText(String.valueOf(value));
+	public void setLetter(char letter) {
+		this.letter = letter; 
+		letterLabel.setText(String.valueOf(letter));
 	}
 	
 	public char getLetter() {

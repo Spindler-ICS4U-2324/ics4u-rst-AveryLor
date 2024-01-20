@@ -14,6 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 
 public class NYTimesFX extends Application {
 
@@ -38,7 +44,6 @@ public class NYTimesFX extends Application {
 	private Button btnSubmit;
 	
 	private static int numGuesses = 0; 
-	private static int numFullGuesses = 0; 
 
 	@Override
 	public void start(Stage myStage) throws Exception {
@@ -83,9 +88,18 @@ public class NYTimesFX extends Application {
 		root.add(lblPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblPassword, HPos.LEFT);
 
-		
+		// Background image 
+	    Image image = new Image("/images/loginPageBG.png");
+
+	    // Create a BackgroundImage from the loaded image
+	    BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+	    
+
 		
 		Scene scene = new Scene(root, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
+		Background background = new Background(backgroundImage);
+	    root.setBackground(background);
+
 		myStage.setTitle("NYTimesFX");
 		myStage.setScene(scene);
 		myStage.show();
@@ -127,6 +141,7 @@ public class NYTimesFX extends Application {
 	}
 
 	private Scene getWordleScene() {
+		
 		GridPane wordleRoot = new GridPane();
 		wordleRoot.setHgap(GAP);
 		wordleRoot.setVgap(GAP);
@@ -152,35 +167,35 @@ public class NYTimesFX extends Application {
 		Scene wordleScene = new Scene(wordleRoot, WORDLE_SCREEN_WIDTH, WORDLE_SCREEN_HEIGHT);
 		wordleScene.setOnKeyPressed(event -> handleKeyStroke(event));
 
-		return wordleScene; // Updated height calculation
+		return wordleScene; 
 	}
 
 	private void handleKeyStroke(KeyEvent event) {
-		numGuesses++; 
-		String wordleWord; 
-		
+
+		String wordleWord;
+
 		char character = event.getCode().toString().charAt(0);
 		for (int row = 0; row < HEIGHT; row++) {
 			for (int col = 0; col < LENGTH; col++) {
 				if (box[row][col].getLetter() == Square.BLANK) {
 					box[row][col].setLetter(character);
-					
-					if (numGuesses % 5 == 0) {
-						numFullGuesses++; 
-						if (WordleFX.isRowFull(numFullGuesses - 1, box)) {
-							wordleWord = WordleFX.interpretUserGuess(numGuesses, box); 
-							WordleFX.wordClean(wordleWord, box, numFullGuesses - 1);
-						}
+
+
+					if (WordleFX.isRowFull(numGuesses, box)) {
 						
+						wordleWord = WordleFX.interpretUserGuess(numGuesses, box);
+						showAlert(AlertType.ERROR, "alert", wordleWord); 
+						WordleFX.wordClean(box, numGuesses);
+						numGuesses++;
 					}
-					
-					
+
+
+
 					return; // exit the method after placing the character
 				}
 			}
 		}
 	}
-	
 
 
 	private void showAlert(AlertType alertType, String title, String message) {

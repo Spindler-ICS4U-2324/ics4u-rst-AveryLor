@@ -1,6 +1,7 @@
 package assignment;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,10 +22,6 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class NYTimesFX extends Application {
 
 	private static final int GAP = 15;
@@ -40,12 +37,11 @@ public class NYTimesFX extends Application {
 	private static final int WORDLE_SCREEN_HEIGHT = 1100;
 	
 	private LoginSystem loginCheck = new LoginSystem();
-	private WordleFX wordleGame = new WordleFX(); 
+	private WordleFX wordleGame; 
 	private Square[][] box;
 	private Stage myStage;
 
 	// JavaFX elements
-	private Label lblTitle, lblUsername, lblPassword;
 	private TextField txtUsername, txtPassword;
 	private Button btnSubmit;
 	
@@ -53,19 +49,21 @@ public class NYTimesFX extends Application {
 
 	@Override
 	public void start(Stage myStage) throws Exception {
-
 		this.myStage = myStage;
-
+		
 		GridPane root = new GridPane();
 		root.setHgap(GAP);
 		root.setVgap(GAP);
 		root.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		root.setAlignment(Pos.CENTER);
 
-		lblTitle = new Label();
+		Image symbol = new Image("/images/symbol.png");
+		root.add(symbol, 2, 0); // Assuming you want it in the top-right corner (adjust column index as needed)
+		
+		Label lblTitle = new Label();
 		lblTitle.setFont(Font.font(FONT));
 		lblTitle.setText("Login Page");
-		root.add(lblTitle, 0, 0, 1, 1);
+		root.add(lblTitle, 1, 0, 1, 1);
 		GridPane.setHalignment(lblTitle, HPos.LEFT);
 
 		txtUsername = new TextField();
@@ -82,22 +80,27 @@ public class NYTimesFX extends Application {
 		btnSubmit.setOnAction(event -> checkCredentials());
 		root.add(btnSubmit, 1, 3);
 
-		lblUsername = new Label();
+		Label lblUsername = new Label();
 		lblUsername.setFont(Font.font(FONT));
 		lblUsername.setText("Username:");
 		root.add(lblUsername, 0, 1, 1, 1);
 		GridPane.setHalignment(lblUsername, HPos.LEFT);
 
-		lblPassword = new Label();
+		Label lblPassword = new Label();
 		lblPassword.setFont(Font.font(FONT));
 		lblPassword.setText("Password:");
 		root.add(lblPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblPassword, HPos.LEFT);
 
-		// Background image 
-	    Image image = new Image("/images/loginPageBG.png");
+		Label lblNoAccount = new Label(); 
+		lblNoAccount.setFont(Font.font(SMALL_FONT));
+		lblNoAccount.setText("Do not have an account? Create one below!");
+		root.add(lblNoAccount, 0, 5, 2, 1);  // Set row span to 2
+		GridPane.setHalignment(lblNoAccount, HPos.CENTER);
+		
 
-	    // Create a BackgroundImage from the loaded image
+	    // Creating a background image
+		Image image = new Image("/images/loginPageBG.png");
 	    BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
 	    
 
@@ -105,7 +108,6 @@ public class NYTimesFX extends Application {
 		Scene scene = new Scene(root, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
 		Background background = new Background(backgroundImage);
 	    root.setBackground(background);
-
 		myStage.setTitle("NYTimesFX");
 		myStage.setScene(scene);
 		myStage.show();
@@ -147,6 +149,9 @@ public class NYTimesFX extends Application {
 	}
 
 	private Scene getWordleScene() {
+		// Instantiating the WordleFX scene 
+		wordleGame = new WordleFX(); 
+		numGuesses = 0; 
 		
 		GridPane wordleRoot = new GridPane();
 		wordleRoot.setHgap(GAP);
@@ -177,18 +182,9 @@ public class NYTimesFX extends Application {
 	}
 
 	private void handleKeyStroke(KeyEvent event) {
-		// Variables 
-		String wordleWord = "";
-		
-//		ArrayList<Character> test = WordleFX.uniqueCharacters("plane");
-//		for (int i = 0; i < test.size(); i++) {
-//			wordleWord += test.get(i); 
-//		}
-//		
-//		showAlert(AlertType.ERROR, "alert", wordleWord);
-
 		boolean letterPlaced = false;
 	    char character = event.getCode().toString().charAt(0);
+	    
 
 	    for (int row = 0; row < HEIGHT; row++) {
 	        for (int col = 0; col < LENGTH; col++) {
@@ -205,13 +201,12 @@ public class NYTimesFX extends Application {
 	    }
 
 	    if (letterPlaced) {
-	    	
 	        if (WordleFX.isRowFull(numGuesses, box)) {
-	            numGuesses++;
+	        	numGuesses++;
 	            if (wordleGame.wordClean(box, numGuesses - 1)) {
-	            	showAlert(AlertType.INFORMATION, "alert", "You win!"); 
+	            	showAlert(AlertType.INFORMATION, "You Win!", "The word was: "+ wordleGame.getKeyword()); 
 	            } else if (WordleFX.isBoardFull(box)) {
-	            	showAlert(AlertType.INFORMATION, "alert", "You loose"); 
+	            	showAlert(AlertType.INFORMATION, "alert", "The word was: " + wordleGame.getKeyword()); 
 	            }
 	        }
 	    }

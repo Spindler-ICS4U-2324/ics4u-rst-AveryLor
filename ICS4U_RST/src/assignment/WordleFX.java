@@ -13,6 +13,19 @@ public class WordleFX {
 	private static final int HEIGHT = 6; 
 	private String keyword; 
 
+	public WordleFX() {
+		keyword = WordleFX.generateKeyword();
+		setKeyword(keyword); 
+	}
+	
+	public WordleFX(String keyword) {
+	    if (keyword.length() > 5) {
+	        throw new IllegalArgumentException("Keyword is too long. Maximum allowed length is 5 characters.");
+	    }
+	    setKeyword(keyword);
+	}
+
+	
 	public void setKeyword(String keyword) {
 		this.keyword = keyword; 
 	}
@@ -21,10 +34,7 @@ public class WordleFX {
 		return keyword; 
 	}
 	
-	public WordleFX() {
-		keyword = WordleFX.generateKeyword();
-	}
-
+	
 	public boolean wordClean(Square[][] userBoard, int numGuesses) {
 		// Variables
 		String wordleGuess, keyword;
@@ -35,14 +45,12 @@ public class WordleFX {
 			return true;
 		} else {
 			// Get all the unique characters of the guess
-			//keyword = getKeyword();
+			keyword = getKeyword();
 			
-			
-			ArrayList<Character> uniqueChar = uniqueCharacters("plane");
-
+			ArrayList<Character> uniqueChar = uniqueCharacters(keyword);
 			for (int col = 0; col < wordleGuess.length(); col++) {
 				if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) {
-					if (uniqueChar.contains(wordleGuess.charAt(col))) {
+					if (uniqueChar.contains(Character.toUpperCase(wordleGuess.charAt(col)))) {
 						userBoard[numGuesses][col].setYellow(); 
 					} else {
 						userBoard[numGuesses][col].setGray();
@@ -52,20 +60,15 @@ public class WordleFX {
 			}
 		}
 		return false;
-
 	}
 
 
 	public boolean checkWord(String wordleGuess, Square[][] userBoard, int numGuesses) {
 		// Processing=
-	    String keyword = "";
+	    String keyword;
 	    int counter = 0;
 
-		
-		//keyword = generateKeyWord(); 
-
-		keyword = "plane"; 
-		setKeyword(keyword); 
+		keyword = getKeyword();
 		
 		for (int col = 0; col < LENGTH; col++) {
 			if (Character.toUpperCase(wordleGuess.charAt(col)) == Character.toUpperCase(keyword.charAt(col))) {
@@ -124,7 +127,7 @@ public class WordleFX {
 			
 			// Check if the character is not in the uniqueChars list 
 			if (!uniqueChars.contains(currentChar)) {
-				uniqueChars.add(currentChar);
+				uniqueChars.add(Character.toUpperCase(currentChar));
 			}
 		}
 		return uniqueChars; 

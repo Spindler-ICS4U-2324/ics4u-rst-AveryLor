@@ -10,68 +10,62 @@ import java.util.ArrayList;
 public class WordleFX {
 	
 	private static final int LENGTH = 5; 
+	private static final int HEIGHT = 6; 
+	private String keyword; 
 
-
-	public static void wordClean(Square[][] userBoard, int numGuesses) {
-		String wordleGuess = interpretUserGuess(numGuesses, userBoard);
-		if (checkWord(wordleGuess, userBoard, numGuesses)) {
-		} else {
-			// Get all the unique characters of the guess
-			ArrayList<Character> uniqueChar = uniqueCharacters(wordleGuess);
-
-			// Convert the ArrayList of characters to an array of characters
-			Character[] uniqueCharArray = uniqueChar.toArray(new Character[uniqueChar.size()]);
-			for (int i = 0; i < uniqueCharArray.length; i++) {
-				uniqueCharArray[i] = uniqueChar.get(i); 
-			}
-			
-			
-			// Processing 
-//			for (int col = 0; col < LENGTH; col++) {
-//				if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) {
-//					
-//					for (int j = 0; j < uniqueChar.size(); j++) {
-//						if (wordleGuess.charAt(col) == uniqueChar.get(j)) {
-//							userBoard[numGuesses][col].setYellow(); 
-//						} else {
-//							userBoard[numGuesses][col].setGray();
-//						}
-//					}
-//				}
-//			}
-			
-			for (int col = 0; col < LENGTH; col++) {
-			    if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) {
-			        boolean isInWord = false;
-			        for (int j = 0; j < uniqueCharArray.length; j++) {
-			            if (wordleGuess.charAt(col) == uniqueCharArray[j]) {
-			                isInWord = true;
-			                break;
-			            }
-			        }
-			        if (isInWord) {
-			            for (int j = 0; j < uniqueChar.size(); j++) {
-			                if (wordleGuess.charAt(col) == uniqueChar.get(j)) {
-			                    userBoard[numGuesses][col].setYellow(); 
-			                    break;
-			                }
-			            }
-			        } else {
-			            userBoard[numGuesses][col].setGray();
-			        }
-			    }
-			}
-		}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword; 
+	}
+	
+	public String getKeyword() {
+		return keyword; 
+	}
+	
+	public WordleFX() {
+		keyword = WordleFX.generateKeyword();
 	}
 
-	public static boolean checkWord(String wordleGuess, Square[][] userBoard, int numGuesses) {
+	public boolean wordClean(Square[][] userBoard, int numGuesses) {
+		// Variables
+		String wordleGuess, keyword;
+
 		// Processing
-		String keyword = "";
-		int counter = 0;
+		wordleGuess = interpretUserGuess(numGuesses, userBoard);
+		if (checkWord(wordleGuess, userBoard, numGuesses)) {
+			return true;
+		} else {
+			// Get all the unique characters of the guess
+			//keyword = getKeyword();
+			
+			
+			ArrayList<Character> uniqueChar = uniqueCharacters("plane");
+
+			for (int col = 0; col < wordleGuess.length(); col++) {
+				if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) {
+					if (uniqueChar.contains(wordleGuess.charAt(col))) {
+						userBoard[numGuesses][col].setYellow(); 
+					} else {
+						userBoard[numGuesses][col].setGray();
+					}
+				}
+
+			}
+		}
+		return false;
+
+	}
+
+
+	public boolean checkWord(String wordleGuess, Square[][] userBoard, int numGuesses) {
+		// Processing=
+	    String keyword = "";
+	    int counter = 0;
+
 		
 		//keyword = generateKeyWord(); 
 
 		keyword = "plane"; 
+		setKeyword(keyword); 
 		
 		for (int col = 0; col < LENGTH; col++) {
 			if (Character.toUpperCase(wordleGuess.charAt(col)) == Character.toUpperCase(keyword.charAt(col))) {
@@ -89,7 +83,7 @@ public class WordleFX {
 		}
 	}
 	
-	public static String generateKeyWord() {
+	public static String generateKeyword() {
 		int randNum;
 		String keyword, line; 
 		
@@ -120,13 +114,13 @@ public class WordleFX {
 		return keyword; 
 	}
 	
-	public static ArrayList<Character> uniqueCharacters(String wordleGuess) {
+	public static ArrayList<Character> uniqueCharacters(String keyword) {
 		// Variables 
 		ArrayList<Character> uniqueChars = new ArrayList<Character>();
 		
 		// Processing 
-		for (int i = 0; i < wordleGuess.length(); i++) {
-			char currentChar = wordleGuess.charAt(i); 
+		for (int i = 0; i < keyword.length(); i++) {
+			char currentChar = keyword.charAt(i); 
 			
 			// Check if the character is not in the uniqueChars list 
 			if (!uniqueChars.contains(currentChar)) {
@@ -154,6 +148,22 @@ public class WordleFX {
 		}
 		
 		if (counter == 5) {
+			return true; 
+		} else {
+			return false; 
+		}
+	}
+	
+	public static boolean isBoardFull(Square[][] userBoard) {
+		int counter = 0; 
+		
+		for (int row = 0; row < HEIGHT; row++) {
+			if(isRowFull(row, userBoard)) {
+				counter += 1; 
+			}
+		}
+		
+		if (counter == 6) {
 			return true; 
 		} else {
 			return false; 

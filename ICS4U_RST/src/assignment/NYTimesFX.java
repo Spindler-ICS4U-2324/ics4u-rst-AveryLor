@@ -21,6 +21,10 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class NYTimesFX extends Application {
 
 	private static final int GAP = 15;
@@ -34,7 +38,9 @@ public class NYTimesFX extends Application {
 	private static final int HOME_SCREEN_HEIGHT = 1000;
 	private static final int WORDLE_SCREEN_WIDTH = 1100;
 	private static final int WORDLE_SCREEN_HEIGHT = 1100;
+	
 	private LoginSystem loginCheck = new LoginSystem();
+	private WordleFX wordleGame = new WordleFX(); 
 	private Square[][] box;
 	private Stage myStage;
 
@@ -171,30 +177,44 @@ public class NYTimesFX extends Application {
 	}
 
 	private void handleKeyStroke(KeyEvent event) {
+		// Variables 
+		String wordleWord = "";
+		
+//		ArrayList<Character> test = WordleFX.uniqueCharacters("plane");
+//		for (int i = 0; i < test.size(); i++) {
+//			wordleWord += test.get(i); 
+//		}
+//		
+//		showAlert(AlertType.ERROR, "alert", wordleWord);
 
-		String wordleWord;
+		boolean letterPlaced = false;
+	    char character = event.getCode().toString().charAt(0);
 
-		char character = event.getCode().toString().charAt(0);
-		for (int row = 0; row < HEIGHT; row++) {
-			for (int col = 0; col < LENGTH; col++) {
-				if (box[row][col].getLetter() == Square.BLANK) {
-					box[row][col].setLetter(character);
+	    for (int row = 0; row < HEIGHT; row++) {
+	        for (int col = 0; col < LENGTH; col++) {
+	            if (box[row][col].getLetter() == Square.BLANK) {
+	                box[row][col].setLetter(character);
+	                letterPlaced = true;
+	                break; // exit the inner loop after placing the character
+	            }
+	        }
 
+	        if (letterPlaced) {
+	            break; // exit the outer loop after placing the character
+	        }
+	    }
 
-					if (WordleFX.isRowFull(numGuesses, box)) {
-						
-						wordleWord = WordleFX.interpretUserGuess(numGuesses, box);
-						showAlert(AlertType.ERROR, "alert", wordleWord); 
-						WordleFX.wordClean(box, numGuesses);
-						numGuesses++;
-					}
-
-
-
-					return; // exit the method after placing the character
-				}
-			}
-		}
+	    if (letterPlaced) {
+	    	
+	        if (WordleFX.isRowFull(numGuesses, box)) {
+	            numGuesses++;
+	            if (wordleGame.wordClean(box, numGuesses - 1)) {
+	            	showAlert(AlertType.INFORMATION, "alert", "You win!"); 
+	            } else if (WordleFX.isBoardFull(box)) {
+	            	showAlert(AlertType.INFORMATION, "alert", "You loose"); 
+	            }
+	        }
+	    }
 	}
 
 

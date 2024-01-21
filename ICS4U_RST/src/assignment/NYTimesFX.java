@@ -1,7 +1,7 @@
 package assignment;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.paint.Color;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,6 +23,8 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.FontWeight;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.HBox;
 
 public class NYTimesFX extends Application {
 
@@ -38,6 +40,8 @@ public class NYTimesFX extends Application {
 	private static final int HOME_SCREEN_HEIGHT = 1000;
 	private static final int WORDLE_SCREEN_WIDTH = 1100;
 	private static final int WORDLE_SCREEN_HEIGHT = 1100;
+	private static final int SHOP_SCREEN_WIDTH = 1000; 
+	private static final int SHOP_SCREEN_HEIGHT = 1000; 
 	
 	private LoginSystem loginCheck = new LoginSystem();
 	private WordleFX wordleGame; 
@@ -48,6 +52,8 @@ public class NYTimesFX extends Application {
 	private TextField txtUsername, txtPassword, txtNewUsername, txtNewPassword;
 	private BackgroundImage homepageBackgroundImage; 
 	private Background homepageBackground; 
+	private ImageView imgSymbol = new ImageView(getClass().getResource("/images/symbol.png").toString());
+    
 	
 	private String FILE = "data/accountDB";
 	private static int numGuesses = 0; 
@@ -92,6 +98,9 @@ public class NYTimesFX extends Application {
 		Button btnSubmit = new Button();
 		btnSubmit.setFont(Font.font("Times New Roman",FONT));
 		btnSubmit.setText("Submit");
+		btnSubmit.setTextFill(Color.WHITE);
+		btnSubmit.setStyle("-fx-background-color: black;");
+		btnSubmit.setOnAction(event -> myStage.setScene(getCreateAccountScene()));
 		btnSubmit.setOnAction(event -> checkCredentials());
 		root.add(btnSubmit, 0, 3, 2, 1);
 		GridPane.setHalignment(btnSubmit, HPos.CENTER);
@@ -117,6 +126,8 @@ public class NYTimesFX extends Application {
 		Button btnCreateNewAccount = new Button();
 		btnCreateNewAccount.setFont(Font.font("Times New Roman", FONT)); 
 		btnCreateNewAccount.setText("Create New Account");
+		btnCreateNewAccount.setStyle("-fx-background-color: black;");
+		btnCreateNewAccount.setTextFill(Color.WHITE);
 		btnCreateNewAccount.setOnAction(event -> myStage.setScene(getCreateAccountScene()));
 		root.add(btnCreateNewAccount, 0, 6, 2, 1);
 		GridPane.setHalignment(btnCreateNewAccount, HPos.CENTER);
@@ -163,27 +174,94 @@ public class NYTimesFX extends Application {
 	}
 
 	private Scene getHomeScene() {
-		GridPane homeRoot = new GridPane();
-		homeRoot.setHgap(GAP);
-		homeRoot.setVgap(GAP);
-		homeRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
-		homeRoot.setAlignment(Pos.CENTER);
+	    GridPane homeRoot = new GridPane();
+	    homeRoot.setHgap(GAP);
+	    homeRoot.setVgap(GAP);
+	    homeRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
+	    homeRoot.setAlignment(Pos.CENTER);
 
-		Label lblHome = new Label();
-		lblHome.setFont(Font.font(FONT));
-		lblHome.setText("NYTimes");
-		homeRoot.add(lblHome, 0, 0, 1, 1);
-		GridPane.setHalignment(lblHome, HPos.LEFT);
+	    HBox headerBox = new HBox(GAP);
+	    headerBox.setAlignment(Pos.CENTER);
 
-		// Button to move to the Wordle game
-		Button btnWordleGame = new Button();
-		btnWordleGame.setFont(Font.font(FONT));
-		btnWordleGame.setText("Wordle");
-		btnWordleGame.setOnAction(event -> myStage.setScene(getWordleScene()));
-		homeRoot.add(btnWordleGame, 0, 0, 1, 10);
+	    imgSymbol.setFitWidth(100);
+	    imgSymbol.setFitHeight(100);
 
-		return new Scene(homeRoot, HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT);
+	    Label lblHome = new Label("New York Times Home Page");
+	    lblHome.setFont(Font.font("Times New Roman", LARGE_FONT));
+
+	    headerBox.getChildren().addAll(imgSymbol, lblHome);
+	    homeRoot.add(headerBox, 0, 0, 2, 1); // Span 2 columns for header
+	    GridPane.setHalignment(headerBox, HPos.CENTER);
+
+	    ImageView wordle = new ImageView(getClass().getResource("/images/wordle.png").toString());
+	    wordle.setFitWidth(500);
+	    wordle.setFitHeight(500);
+
+	    StackPane wordlePane = new StackPane(wordle);
+	    homeRoot.add(wordlePane, 0, 1, 2, 1); // Span 2 columns for wordle
+	    GridPane.setHalignment(wordlePane, HPos.CENTER);
+
+	    Button btnWordleGame = new Button("Wordle");
+	    btnWordleGame.setFont(Font.font("Times New Roman", FONT));
+	    btnWordleGame.setTextFill(Color.WHITE);
+	    btnWordleGame.setStyle("-fx-background-color: black;");
+	    btnWordleGame.setOnAction(event -> myStage.setScene(getWordleScene()));
+	    homeRoot.add(btnWordleGame, 0, 2, 2, 1); // Span 2 columns for the button
+	    GridPane.setHalignment(btnWordleGame, HPos.CENTER);
+	    
+	    Button btnPointsRedemption = new Button("Shop");
+	    btnPointsRedemption.setFont(Font.font("Times New Roman", FONT));
+	    btnPointsRedemption.setTextFill(Color.WHITE);
+	    btnPointsRedemption.setStyle("-fx-background-color: black;");
+	    btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
+	    homeRoot.add(btnPointsRedemption, 2, 2, 2, 1); // Span 2 columns for the button
+	    GridPane.setHalignment(btnPointsRedemption, HPos.CENTER);
+
+	    return new Scene(homeRoot, HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT);
 	}
+	
+	
+	
+	
+	
+	private Scene getPointsRedemptionShop() {
+	    GridPane redemptionRoot = new GridPane();
+	    redemptionRoot.setHgap(GAP);
+	    redemptionRoot.setVgap(GAP);
+	    redemptionRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
+	    redemptionRoot.setAlignment(Pos.CENTER);
+
+	    Label lblTitle = new Label("Points Redemption Shop");
+	    lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
+	    redemptionRoot.add(lblTitle, 0, 0, 3, 1); // Span 3 columns for the label
+	    GridPane.setHalignment(lblTitle, HPos.CENTER);
+
+	    // Assuming you have an enum representing gifts (replace Gift with your actual enum)
+	    int rowIndex = 1; // Initialize rowIndex
+	    for (ShopItem shopItems : ShopItem) {
+	        // Add code to display gift options in the redemptionRoot GridPane
+	        // For example, you can create labels or buttons for each gift option
+	        Label lblGift = new Label(shopItems.getName() + " - " + shopItems.getPoints() + " points");
+	        redemptionRoot.add(lblGift, 0, rowIndex);
+	        // Adjust the rowIndex and layout according to your design
+	        rowIndex++;
+	    }
+
+	    Button btnReturnHome = new Button();
+	    btnReturnHome.setFont(Font.font(SMALL_FONT));
+	    btnReturnHome.setText("Return Home");
+	    btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
+	    GridPane.setHalignment(btnReturnHome, HPos.CENTER);
+	    redemptionRoot.add(btnReturnHome, 0, rowIndex); // Added 1 to the rowIndex
+
+	    Scene redemptionScene = new Scene(redemptionRoot, SHOP_SCREEN_WIDTH, SHOP_SCREEN_HEIGHT);
+
+	    return redemptionScene;
+	}
+	
+	
+	
+	
 	
 	private Scene getCreateAccountScene() {
 		GridPane newAccountRoot = new GridPane();
@@ -192,7 +270,6 @@ public class NYTimesFX extends Application {
 		newAccountRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		newAccountRoot.setAlignment(Pos.CENTER);
 
-		ImageView imgSymbol = new ImageView(getClass().getResource("/images/symbol.png").toString());
 		imgSymbol.setFitWidth(100); // Set the desired width
 		imgSymbol.setFitHeight(100); // Set the desired height
 		newAccountRoot.add(imgSymbol, 0, 0); // Assuming you want it in the top-right corner (adjust column index as needed)
@@ -226,6 +303,8 @@ public class NYTimesFX extends Application {
 		Button btnCreateNewAccount = new Button();
 		btnCreateNewAccount.setFont(Font.font("Times New Roman", FONT)); 
 		btnCreateNewAccount.setText("Create New Account");
+		btnCreateNewAccount.setTextFill(Color.WHITE);
+		btnCreateNewAccount.setStyle("-fx-background-color: black;");
 		btnCreateNewAccount.setOnAction(event -> createNewAccount());
 		newAccountRoot.add(btnCreateNewAccount, 0, 3, 2, 1);
 		GridPane.setHalignment(btnCreateNewAccount, HPos.CENTER);
@@ -233,12 +312,12 @@ public class NYTimesFX extends Application {
 		homepageBackground = new Background(homepageBackgroundImage);
 	    newAccountRoot.setBackground(homepageBackground);
 
-		return new Scene(newAccountRoot, HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT);
+		return new Scene(newAccountRoot, LOGIN_SCREEN_WIDTH + 300, LOGIN_SCREEN_HEIGHT);
 	}
 	
-
 	
-
+	
+	
 	private Scene getWordleScene() {
 		// Instantiating the WordleFX scene 
 		wordleGame = new WordleFX(); 
@@ -253,21 +332,33 @@ public class NYTimesFX extends Application {
 		wordleRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		wordleRoot.setAlignment(Pos.CENTER);
 
+		imgSymbol.setFitWidth(100); // Set the desired width
+		imgSymbol.setFitHeight(100); // Set the desired height
+		wordleRoot.add(imgSymbol, 0, 0); // Assuming you want it in the top-right corner (adjust column index as needed)
+		
+		 // Adding label at the top
+	    Label lblTitle = new Label("Wordle");
+	    lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
+	    wordleRoot.add(lblTitle, 1, 0, 3, 1); // Span 3 columns for the label
+	    GridPane.setHalignment(lblTitle, HPos.CENTER);
+		
 		box = new Square[HEIGHT][LENGTH];
 		for (int col = 0; col <= LENGTH - 1; col++) {
 			for (int row = 0; row <= HEIGHT - 1; row++) {
 				box[row][col] = new Square();
 				box[row][col].setLetter(Square.BLANK); // Initialize letter as a blank space
-				wordleRoot.add(box[row][col], col, row);
+				wordleRoot.add(box[row][col], col, row + 1);
 			}
 		}
 
 		Button btnReturnHome = new Button();
-		btnReturnHome.setFont(Font.font(SMALL_FONT));
+		btnReturnHome.setFont(Font.font("Times New Roman", SMALL_FONT));
 		btnReturnHome.setText("Return Home");
+		btnReturnHome.setTextFill(Color.WHITE);
+		btnReturnHome.setStyle("-fx-background-color: black;");
 		btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
 		GridPane.setHalignment(btnReturnHome, HPos.CENTER);
-		wordleRoot.add(btnReturnHome, 2, 7); // Added 1 to the row index
+		wordleRoot.add(btnReturnHome, 2, 8); // Added 1 to the row index
 
 		wordleScene = new Scene(wordleRoot, WORDLE_SCREEN_WIDTH, WORDLE_SCREEN_HEIGHT);
 		wordleScene.setOnKeyPressed(event -> handleKeyStroke(event));

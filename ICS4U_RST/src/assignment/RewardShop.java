@@ -12,21 +12,29 @@ import java.util.ArrayList;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 
 public class RewardShop {
-    private FileReader accountFile; // Used to access the file 
-    private BufferedReader accountReader; // Used to read from the file 
     private ArrayList<Account> accountList; // ArrayList/data structure containing all of the Account instances 
 
-    private ShopItems rewardItems;
-
-    public enum ShopItems {
-      GiftCard, Coffee, Newspaper
-    }
     
+    public enum ShopItem {
+        GIFTCARD(10), NEWSPAPER(20), COFFEE(3);
+
+        private final int points;
+
+        ShopItem(int points) {
+            this.points = points;
+        }
+
+        public int getPoints() {
+            return points;
+        }
+    }
     
     /**
      * Constructor. Initializes an ArrayList that holds all of the accounts.  
@@ -36,59 +44,81 @@ public class RewardShop {
     }
 
     /**
-     * This method checks the data file and creates the necessary accounts described within the file
-     * to create persistence.
-     *
-     * @param file
-     *        String of the file path
-     *
-     * @throws FileNotFoundException
-     *         If the file cannot be found tell the user 
-     *         
-     * @throws IOException
-     *         If an I/O error occurs while reading the file tell the user 
-     * 
-     * @throws NumberFormatException
-     *         If there is an error parsing a number from the file tlel the user
-     */
-    public void savedAccountsProcessing(String file) {
-        // Variable
-        String userPassword, lastName;
-        int accountIndex, numWeeks;
+	 * Saves all account information to a specified file.
+	 *
+	 * @param file        The path of the file to which the information will be
+	 *                    saved.
+	 * 
+	 * @param accountInfo The list of accounts whose information needs to be saved.
+	 * 
+	 * @throws FileNotFoundException 
+	 * 		If the specified file cannot be found or created.
+	 * 
+	 * @throws IOException           
+	 * 		If an I/O error occurs while writing to the file.
+	 */
+	public void saveAllAccounts(String file) {
+		// Variables
+		String username, password; // Names 
 
-        // Try and catch loop
-        try {
-            accountFile = new FileReader(file);
-            accountReader = new BufferedReader(accountFile);
+		try {
+			FileWriter fileWriter = new FileWriter(file); // Initialize FileWriter to write to the file
+			PrintWriter filePrinter = new PrintWriter(fileWriter); // Initialize FileReader to read from the file
 
-            // Processing
-            while (accountReader.readLine() != null) { // The first line is blank due to the while loop 
-                accountIndex = Integer.parseInt(accountReader.readLine()); // Second line is the account index 
-                userPassword = accountReader.readLine(); // Third is the first name 
-                lastName = accountReader.readLine(); // Fourth is the last name 
-                numWeeks = Integer.parseInt(accountReader.readLine()); // Fifth is the number of weeks that were payed 
+			for (Account temp : accountList) { // Goes through all the accounts within the data structure (ArrayList) 
+				// Gets all the pertinent information as described in the variables above through gettors 
+				username = temp.getUsername();
+				password = temp.getPassword();
+				
+				// Prints all the information into the text file 
+				filePrinter.println(username);
+				filePrinter.println(password);
 
-                // Variables
-                double[] weeklySpendingLog = new double[numWeeks];
+			}
+			fileWriter.close(); // Closes at the end 
+		} catch (FileNotFoundException e) { // If the file is not found
+			e.printStackTrace();
+		} catch (IOException a) { // Handles the IOException
+			a.printStackTrace();
+		} // Again used the .printStackTrace() for the same reasons outlined in the PointsRecorder class 
+	}
 
-                // Processing
-                for (int i = 0; i < numWeeks; i++) { // And loop through the rest of the weeks 
-                    weeklySpendingLog[i] = Double.parseDouble(accountReader.readLine());
+	
+	public void loadAllAccounts(String file) throws FileNotFoundException, IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String username = line;
+                String password = reader.readLine();
+                int points = Integer.parseInt(reader.readLine());
+                String[] purchasedItems = reader.readLine().split(",");
+
+                // Create an Account instance and add it to the accountList
+                Account account = new Account(username, password);
+                account.setPoints(points);
+                for (String item : purchasedItems) {
+                    account.purchaseItem(item);
                 }
-                //addCompleteAccount(userPassword, lastName, accountIndex, weeklySpendingLog); // Use the addCompleteAccount method afterwards to create persistence 
+                accountList.add(account);
             }
-            accountFile.close();
-        } catch (FileNotFoundException e) {
-		    e.printStackTrace();
-		} catch (IOException a) {
-		    a.printStackTrace();
-        } catch (NumberFormatException g) { // Using printStackTrace instead of the normal throw new IllegalArgumentException
-            g.printStackTrace(); // I did this to make the application seem to flow more coherently and since this is more of a technical error within how  
-            // the user utilizes the object rather than their input I decided to print this error directly to the console rather than a custom message. 
-            // Furthermore, e.printStackTrace() will provide detailed information about where the exception occured which I believe will be far more useful in this case. 
         }
     }
 
+	
+	
+	public boolean redeemItem(ShopItem item, int accountIndex) {
+        Account currentAccount = accountList.get(accountIndex);
+        int requiredPoints = item.getPoints();
+
+        if (currentAccount.getPoints() >= requiredPoints) {
+            currentAccount.setPoints(currentAccount.getPoints() - requiredPoints);
+            currentAccount.purchaseItem(item.name()); // Assuming the item name is the same as the enum constant
+            return true; // Successful redemption
+        } else {
+            return false; // Insufficient points for redemption
+        }
+    }
+	
     
     public void incLoyaltyPoints(boolean win, int accountIndex) {
     	Account currentAccount = accountList.get(accountIndex);

@@ -15,7 +15,8 @@ public class Account {
 	private String userPassword;  // Last name of the account 
 	private int accountIndex; // When instantiated each account is given an index. The PointsRecorder handles the assignment of accountIndex. 
 	private int userPoints; 
-	private ShopItems[];
+	//private ArrayList<ShopItems>;
+	//private ShopItems[];
 	
 	 /**
      * Default constructor. Initializes an account with default values.
@@ -105,5 +106,7 @@ public class Account {
 		return userPoints; 
 	}
 	
-	
+	public void purchaseItem(String itemName) {
+		
+	}
 }

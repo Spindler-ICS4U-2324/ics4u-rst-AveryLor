@@ -213,7 +213,7 @@ public class NYTimesFX extends Application {
 	    btnPointsRedemption.setFont(Font.font("Times New Roman", FONT));
 	    btnPointsRedemption.setTextFill(Color.WHITE);
 	    btnPointsRedemption.setStyle("-fx-background-color: black;");
-	    btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
+	    //btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
 	    homeRoot.add(btnPointsRedemption, 2, 2, 2, 1); // Span 2 columns for the button
 	    GridPane.setHalignment(btnPointsRedemption, HPos.CENTER);
 
@@ -238,14 +238,7 @@ public class NYTimesFX extends Application {
 
 	    // Assuming you have an enum representing gifts (replace Gift with your actual enum)
 	    int rowIndex = 1; // Initialize rowIndex
-	    for (ShopItem shopItems : ShopItem) {
-	        // Add code to display gift options in the redemptionRoot GridPane
-	        // For example, you can create labels or buttons for each gift option
-	        Label lblGift = new Label(shopItems.getName() + " - " + shopItems.getPoints() + " points");
-	        redemptionRoot.add(lblGift, 0, rowIndex);
-	        // Adjust the rowIndex and layout according to your design
-	        rowIndex++;
-	    }
+
 
 	    Button btnReturnHome = new Button();
 	    btnReturnHome.setFont(Font.font(SMALL_FONT));
@@ -258,10 +251,6 @@ public class NYTimesFX extends Application {
 
 	    return redemptionScene;
 	}
-	
-	
-	
-	
 	
 	private Scene getCreateAccountScene() {
 		GridPane newAccountRoot = new GridPane();

@@ -23,12 +23,21 @@ public class RewardShop {
 
     
     public enum ShopItem {
-        GIFTCARD(10), NEWSPAPER(20), COFFEE(3);
+        ITEM1("LCBO Giftcard", 20),
+        ITEM2("Costco Giftcard", 20),
+        ITEM3("Coffee", 10),
+    	ITEM4("Newspaper", 20); 
 
+        private final String itemName;
         private final int points;
 
-        ShopItem(int points) {
+        ShopItem(String itemName, int points) {
+            this.itemName = itemName;
             this.points = points;
+        }
+
+        public String getItemName() {
+            return itemName;
         }
 
         public int getPoints() {
@@ -96,10 +105,7 @@ public class RewardShop {
                 // Create an Account instance and add it to the accountList
                 Account account = new Account(username, password);
                 account.setPoints(points);
-                for (String item : purchasedItems) {
-                    account.purchaseItem(item);
-                }
-                accountList.add(account);
+             
             }
         }
     }

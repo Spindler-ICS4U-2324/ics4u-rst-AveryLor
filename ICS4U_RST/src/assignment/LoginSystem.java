@@ -102,10 +102,39 @@ public class LoginSystem {
 	    	Account newAccount = new Account(username, password);
 	    	accountList.add(newAccount); 
 	    }
-
-	
 		
 	}
+	
+	/**
+     * Finds the account index based on the provided username.
+     *
+     * @param username The username to search for.
+     * @return The account index if the username is found, or -1 if not found.
+     */
+    public int findAccountIndexByUsername(String username) {
+        for (int i = 0; i < accountList.size(); i++) {
+            if (accountList.get(i).getUsername().equals(username)) {
+                return i; // Return the index if the username is found
+            }
+        }
+        return -1; // Return -1 if the username is not found
+    }
+    
+    /**
+     * Gets the Account instance for the given account index.
+     *
+     * @param accountIndex The index of the account.
+     * @return The Account instance if the index is valid, or null if not found.
+     */
+    public Account getAccountByIndex(int accountIndex) {
+        try {
+            return accountList.get(accountIndex); // Return the Account instance if the index is valid
+        } catch (IndexOutOfBoundsException e) {
+            // Print the full stack trace of the exception
+            e.printStackTrace();
+            return null;
+        }
+    }
 	
 
 	public boolean findUserName(String[] allUserNames, String searchName, int left, int right) {

@@ -25,6 +25,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.FontWeight;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
 
 public class NYTimesFX extends Application {
 
@@ -43,10 +46,13 @@ public class NYTimesFX extends Application {
 	private static final int SHOP_SCREEN_WIDTH = 1000; 
 	private static final int SHOP_SCREEN_HEIGHT = 1000; 
 	
+	
 	private LoginSystem loginCheck = new LoginSystem();
 	private WordleFX wordleGame; 
 	private Square[][] box;
+	private RewardShop pointsShop; 
 	private Stage myStage;
+	private Account currentAccount; 
 
 	// JavaFX elements
 	private TextField txtUsername, txtPassword, txtNewUsername, txtNewPassword;
@@ -147,10 +153,14 @@ public class NYTimesFX extends Application {
 	}
 
 	private void checkCredentials() {
+		// Variables 
 		String username = txtUsername.getText();
 		String password = txtPassword.getText();
-
+		int accountIndex; 
+		
 		if (loginCheck.checkCredentials(password, username)) {
+			accountIndex = loginCheck.findAccountIndexByUsername(username); 
+			currentAccount = loginCheck.getAccountByIndex(accountIndex);
 			myStage.setScene(getHomeScene());
 		} else {
 			showAlert(AlertType.ERROR, "Invalid Credentials", "Please enter a valid username and password.");
@@ -162,9 +172,14 @@ public class NYTimesFX extends Application {
 	private void createNewAccount() {
 		String newUsername = txtNewUsername.getText();
 		String newPassword = txtNewPassword.getText();
+		int accountIndex; 
+
 	
 		try {
 			loginCheck.createNewAccount(newUsername, newPassword);
+			loginCheck.saveAllAccounts(FILE);			
+			accountIndex = loginCheck.findAccountIndexByUsername(newUsername); 
+			currentAccount = loginCheck.getAccountByIndex(accountIndex);
 			myStage.setScene(getHomeScene());
 		} catch (IllegalArgumentException e) {
 			showAlert(AlertType.ERROR, "Username error", e.getMessage()); 
@@ -224,42 +239,60 @@ public class NYTimesFX extends Application {
 	
 	
 	
-	private Scene getPointsRedemptionShop() {
-	    GridPane redemptionRoot = new GridPane();
-	    redemptionRoot.setHgap(GAP);
-	    redemptionRoot.setVgap(GAP);
-	    redemptionRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
-	    redemptionRoot.setAlignment(Pos.CENTER);
+	private Scene getPointsRedemptionShopScene() {
+		
+		GridPane redemptionRoot = new GridPane();
+        redemptionRoot.setHgap(GAP);
+        redemptionRoot.setVgap(GAP);
+        redemptionRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
+        redemptionRoot.setAlignment(Pos.CENTER);
 
-	    Label lblTitle = new Label("Points Redemption Shop");
-	    lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
-	    redemptionRoot.add(lblTitle, 0, 0, 3, 1); // Span 3 columns for the label
-	    GridPane.setHalignment(lblTitle, HPos.CENTER);
+        Label lblTitle = new Label("Points Redemption Shop");
+        lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
+        redemptionRoot.add(lblTitle, 0, 0, 3, 1); // Span 3 columns for the label
+        GridPane.setHalignment(lblTitle, HPos.CENTER);
 
-	    // Assuming you have an enum representing gifts (replace Gift with your actual enum)
-	    int rowIndex = 1; // Initialize rowIndex
-	    for (ShopItem shopItems : ShopItem) {
-	        // Add code to display gift options in the redemptionRoot GridPane
-	        // For example, you can create labels or buttons for each gift option
-	        Label lblGift = new Label(shopItems.getName() + " - " + shopItems.getPoints() + " points");
-	        redemptionRoot.add(lblGift, 0, rowIndex);
-	        // Adjust the rowIndex and layout according to your design
-	        rowIndex++;
-	    }
+        // Mock data for the ComboBox, replace it with your actual items
+        ObservableList<RewardShop.ShopItem> items = FXCollections.observableArrayList(RewardShop.ShopItem.ITEM1, RewardShop.ShopItem.ITEM2, RewardShop.ShopItem.ITEM3);
 
-	    Button btnReturnHome = new Button();
-	    btnReturnHome.setFont(Font.font(SMALL_FONT));
-	    btnReturnHome.setText("Return Home");
-	    btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
-	    GridPane.setHalignment(btnReturnHome, HPos.CENTER);
-	    redemptionRoot.add(btnReturnHome, 0, rowIndex); // Added 1 to the rowIndex
+        ComboBox<RewardShop.ShopItem> itemComboBox = new ComboBox<>(items);
+        itemComboBox.setPromptText("Select Item to Redeem");
+        redemptionRoot.add(itemComboBox, 0, 1);
 
-	    Scene redemptionScene = new Scene(redemptionRoot, SHOP_SCREEN_WIDTH, SHOP_SCREEN_HEIGHT);
+        Button btnRedeemPoints = new Button("Redeem Points");
+        btnRedeemPoints.setFont(Font.font(SMALL_FONT));
+        redemptionRoot.add(btnRedeemPoints, 0, 2);
+        GridPane.setHalignment(btnRedeemPoints, HPos.CENTER);
 
-	    return redemptionScene;
-	}
-	
-	
+        Button btnReturnHome = new Button("Return Home");
+        btnReturnHome.setFont(Font.font(SMALL_FONT));
+        btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
+        redemptionRoot.add(btnReturnHome, 0, 3); // Adjusted row index
+
+        Scene redemptionScene = new Scene(redemptionRoot, SHOP_SCREEN_WIDTH, SHOP_SCREEN_HEIGHT);
+
+        // Assuming you have a method to handle points redemption in your RewardShop class
+        btnRedeemPoints.setOnAction(event -> {
+            RewardShop.ShopItem selectedShopItem = itemComboBox.getValue();
+            if (selectedShopItem != null) {
+            	
+            	
+                boolean success = pointsShop.redeemItem(selectedShopItem, currentAccount.getAccountIndex());
+                if (success) {
+                    // Handle successful redemption (e.g., display a message)
+                    System.out.println("Points redeemed successfully!");
+                } else {
+                    // Handle insufficient points (e.g., display an error message)
+                    System.out.println("Insufficient points for redemption!");
+                }
+            } else {
+                // Handle no item selected (e.g., display a message)
+                System.out.println("Please select an item to redeem.");
+            }
+        });
+
+        return redemptionScene;
+    }
 	
 	
 	

@@ -23,12 +23,20 @@ public class RewardShop {
 
     
     public enum ShopItem {
-        GIFTCARD(10), NEWSPAPER(20), COFFEE(3);
+        ITEM1("Item 1", 10),
+        ITEM2("Item 2", 20),
+        ITEM3("Item 3", 30);
 
+        private final String itemName;
         private final int points;
 
-        ShopItem(int points) {
+        ShopItem(String itemName, int points) {
+            this.itemName = itemName;
             this.points = points;
+        }
+
+        public String getItemName() {
+            return itemName;
         }
 
         public int getPoints() {
@@ -84,51 +92,62 @@ public class RewardShop {
 	}
 
 	
-	public void loadAllAccounts(String file) throws FileNotFoundException, IOException {
+    public void loadAllAccounts(String file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String username = line;
                 String password = reader.readLine();
-                int points = Integer.parseInt(reader.readLine());
-                String[] purchasedItems = reader.readLine().split(",");
+                int numItems = Integer.parseInt(reader.readLine());
+                
+                ArrayList<RewardShop.ShopItem> shopItems = new ArrayList<>();
+                
+                for (int i = 0; i < numItems; i++) {
+                	String currentItem = reader.readLine();
+                	RewardShop.ShopItem shopItem = RewardShop.ShopItem.valueOf(currentItem);
+                	shopItems.add(shopItem);
+                }
+                
+                
 
                 // Create an Account instance and add it to the accountList
                 Account account = new Account(username, password);
-                account.setPoints(points);
+                account.setPoints(numItems);
+
+                // Convert purchasedItems array to ArrayList
+                ArrayList<RewardShop.ShopItem> purchasedItemsList = new ArrayList<>();
                 for (String item : purchasedItems) {
-                    account.purchaseItem(item);
+                    purchasedItemsList.add(ShopItem.valueOf(item)); // Assuming ShopItem is an enum
                 }
+                account.setPurchasedItems(purchasedItemsList);
+
                 accountList.add(account);
             }
         }
     }
+    
+    
 
-	
-	
-	public boolean redeemItem(ShopItem item, int accountIndex) {
+
+    public boolean redeemItem(ShopItem item, int accountIndex) {
         Account currentAccount = accountList.get(accountIndex);
         int requiredPoints = item.getPoints();
 
         if (currentAccount.getPoints() >= requiredPoints) {
             currentAccount.setPoints(currentAccount.getPoints() - requiredPoints);
-            currentAccount.purchaseItem(item.name()); // Assuming the item name is the same as the enum constant
+            currentAccount.purchaseItem(item);
             return true; // Successful redemption
         } else {
             return false; // Insufficient points for redemption
         }
     }
-	
-    
+
     public void incLoyaltyPoints(boolean win, int accountIndex) {
-    	Account currentAccount = accountList.get(accountIndex);
-    	if (win == true) {
-    		currentAccount.setPoints(currentAccount.getPoints() + 100);
-    	} else {
-    		currentAccount.setPoints(currentAccount.getPoints() + 50);
-    	}
+        Account currentAccount = accountList.get(accountIndex);
+        if (win) {
+            currentAccount.setPoints(currentAccount.getPoints() + 100);
+        } else {
+            currentAccount.setPoints(currentAccount.getPoints() + 50);
+        }
     }
-    
-
-
 }

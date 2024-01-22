@@ -8,6 +8,8 @@ package assignment;
  */
 
 
+import java.util.ArrayList;
+
 public class Account {
 
 	// Variables 
@@ -15,7 +17,7 @@ public class Account {
 	private String userPassword;  // Last name of the account 
 	private int accountIndex; // When instantiated each account is given an index. The PointsRecorder handles the assignment of accountIndex. 
 	private int userPoints; 
-	private ShopItems[];
+	private ArrayList<RewardShop.ShopItem> purchasedItems;
 	
 	 /**
      * Default constructor. Initializes an account with default values.
@@ -105,5 +107,53 @@ public class Account {
 		return userPoints; 
 	}
 	
+
+    /**
+     * Gets the list of purchased items for the account.
+     *
+     * @return The list of purchased items.
+     */
+    public ArrayList<RewardShop.ShopItem> getPurchasedItems() {
+        return purchasedItems;
+    }
+    
+    /**
+     * Check if the specified item is already purchased.
+     *
+     * @param item The item to check.
+     * @return true if the item is already purchased, false otherwise.
+     */
+    private boolean isItemPurchased(RewardShop.ShopItem item) {
+        return purchasedItems.contains(item);
+    }
 	
+	
+	/**
+     * Purchase the specified item and add it to the shopItems ArrayList.
+     *
+     * @param item The item to be purchased.
+     * @return true if the item is successfully purchased, false otherwise.
+     */
+    public boolean purchaseItem(RewardShop.ShopItem item) {
+        // Check if the item is not already purchased
+        if (!isItemPurchased(item)) {
+            // Add the item to the shopItems ArrayList
+        	purchasedItems.add(item);
+            return true; // Successful purchase
+        } else {
+            return false; // Item is already purchased
+        }
+    }
+    
+    /**
+     * Set the list of purchased items for the account.
+     *
+     * @param purchasedItemsList The list of purchased items.
+     */
+    public void setPurchasedItems(ArrayList<RewardShop.ShopItem> purchasedItemsList) {
+        this.purchasedItems = purchasedItemsList;
+    }
+    
+    
+    
 }

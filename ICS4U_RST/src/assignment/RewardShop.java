@@ -21,9 +21,9 @@ public class RewardShop {
     private final String ALL_ACCOUNTS_FILE = "data/accountDB"; 
     
     public enum ShopItem {
-        ITEM1("Item 1", 10),
-        ITEM2("Item 2", 20),
-        ITEM3("Item 3", 30);
+        ITEM1("LCBO Giftcard", 10),
+        ITEM2("Newspaper", 20),
+        ITEM3("Costco Giftcard", 30);
 
         private final String itemName;
         private final int points;
@@ -33,6 +33,7 @@ public class RewardShop {
             this.points = points;
         }
 
+
         public String getItemName() {
             return itemName;
         }
@@ -41,6 +42,7 @@ public class RewardShop {
             return points;
         }
     }
+    
     
     
     
@@ -144,6 +146,37 @@ public class RewardShop {
     public ArrayList<Account> getAccountList() {
         return accountList;
     }
+    
+    /**
+     * Gets the Account instance for the given account index.
+     *
+     * @param accountIndex The index of the account.
+     * @return The Account instance if the index is valid, or null if not found.
+     */
+    public Account getAccountByIndex(int accountIndex) {
+        try {
+            return accountList.get(accountIndex); // Return the Account instance if the index is valid
+        } catch (IndexOutOfBoundsException e) {
+            // Print the full stack trace of the exception
+            e.printStackTrace();
+            return null;
+        }
+    }
+    /**
+     * Retrieves a ShopItem based on its name.
+     *
+     * @param itemName The name of the ShopItem.
+     * @return The ShopItem with the specified name, or null if not found.
+     */
+    public ShopItem getShopItemByName(String itemName) {
+        for (ShopItem shopItem : ShopItem.values()) {
+            if (shopItem.getItemName().equals(itemName)) {
+                return shopItem;
+            }
+        }
+        return null; // Item not found
+    }
+    
     
 
 

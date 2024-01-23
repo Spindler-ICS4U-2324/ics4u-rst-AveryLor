@@ -10,11 +10,12 @@ import java.util.Arrays;
 public class LoginSystem {
 
 	private ArrayList<Account> accountList;
-	private final String ALL_ACCOUNTS_FILE = "data/accountDB"; 
 
 	public LoginSystem() {
 	    accountList = new ArrayList<>();
 	}
+	
+	
 	
 	public void loadAllAccounts(String file) throws IOException {
 		try {

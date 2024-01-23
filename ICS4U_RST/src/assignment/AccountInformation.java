@@ -36,7 +36,7 @@ public class AccountInformation { // Utility class, the sole method is static (h
 	public static void saveAllAccounts(String file, ArrayList<Account> accountList) {
 		// Variables
 		String username, password; // Names
-		ArrayList<RewardShop.ShopItem> purchasedItems;
+		ArrayList<AccountsManager.ShopItem> purchasedItems;
 		boolean userHasItems;
 		int points;
 

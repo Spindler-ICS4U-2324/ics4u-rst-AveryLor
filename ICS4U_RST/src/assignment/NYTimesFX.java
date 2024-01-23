@@ -30,7 +30,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.control.ListView;
-import java.io.IOException;
 import java.util.ArrayList;
 import javafx.scene.layout.VBox;
 
@@ -52,12 +51,11 @@ public class NYTimesFX extends Application {
 	private static final int SHOP_SCREEN_HEIGHT = 700;
 	private static final int INVENTORY_HEIGHT = 150; 
 
-	private LoginSystem loginCheck = new LoginSystem();
+	private AccountsManager manager = new AccountsManager();
 	private WordleFX wordleGame;
 	private Square[][] box;
-	private RewardShop pointsShop = new RewardShop();
 	private Stage myStage;
-	private Account credentialsAccount, pointsAccount;
+	private Account currentAccount;
 
 	// JavaFX elements
 	TextField txtUsername, txtPassword, txtNewUsername, txtNewPassword;
@@ -73,17 +71,15 @@ public class NYTimesFX extends Application {
 
 	@Override
 	public void stop() throws Exception { // At the end of the program, save all of the information into the text file
-		ArrayList<Account> accountList = loginCheck.getAccountList();
+		ArrayList<Account> accountList = manager.getAccountList();
 		AccountInformation.saveAllAccounts(FILE, accountList);
-
 	}
 
 	@Override
 	public void start(Stage myStage) throws Exception {
 		this.myStage = myStage;
 
-		loginCheck.loadAllAccounts(FILE);
-		pointsShop.loadAllAccounts(FILE);
+		manager.loadAllAccounts(FILE);
 
 		GridPane root = new GridPane();
 		root.setHgap(GAP);
@@ -116,7 +112,6 @@ public class NYTimesFX extends Application {
 		btnSubmit.setText("Submit");
 		btnSubmit.setTextFill(Color.WHITE);
 		btnSubmit.setStyle("-fx-background-color: black;");
-		btnSubmit.setOnAction(event -> myStage.setScene(getCreateAccountScene()));
 		btnSubmit.setOnAction(event -> checkCredentials());
 		root.add(btnSubmit, 0, 3, 2, 1);
 		GridPane.setHalignment(btnSubmit, HPos.CENTER);
@@ -154,8 +149,6 @@ public class NYTimesFX extends Application {
 		BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
 		homepageBackground = new Background(homepageBackgroundImage);
 		root.setBackground(homepageBackground);
-		
-		
 
 		// Setting the scene
 		Scene scene = new Scene(root, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
@@ -171,16 +164,15 @@ public class NYTimesFX extends Application {
 		String password = txtPassword.getText();
 		int accountIndex;
 
-		if (loginCheck.checkCredentials(password, username)) {
-			accountIndex = loginCheck.findAccountIndexByUsername(username);
-			credentialsAccount = loginCheck.getAccountByIndex(accountIndex);
-			pointsAccount = pointsShop.getAccountByIndex(accountIndex);
-
+		if (manager.checkCredentials(password, username)) {
+			accountIndex = manager.findAccountIndexByUsername(username);
+			currentAccount = manager.getAccountByIndex(accountIndex);
 			myStage.setScene(getHomeScene());
 		} else {
 			showAlert(AlertType.ERROR, "Invalid Credentials", "Please enter a valid username and password.");
 			txtUsername.clear();
 			txtPassword.clear();
+			return; 
 		}
 	}
 
@@ -192,23 +184,17 @@ public class NYTimesFX extends Application {
 		try {
 			newUsername = txtNewUsername.getText();
 			newPassword = txtNewPassword.getText();
-			loginCheck.createNewAccount(newUsername, newPassword);
+			manager.createNewAccount(newUsername, newPassword);
 		} catch (IllegalArgumentException e) {
 			showAlert(AlertType.ERROR, "Username taken", e.getMessage());
 			txtNewUsername.clear();
 			txtNewPassword.clear();
 			return;
 		}
-		accountList = loginCheck.getAccountList();
+		accountList = manager.getAccountList();
 		AccountInformation.saveAllAccounts(FILE, accountList);
-		try {
-		pointsShop.loadAllAccounts(FILE);
-		} catch (IOException e) {
-			showAlert(AlertType.ERROR, "Error", e.getMessage()); 
-		}
-		accountIndex = loginCheck.findAccountIndexByUsername(newUsername);
-		credentialsAccount = loginCheck.getAccountByIndex(accountIndex);
-		pointsAccount = pointsShop.getAccountByIndex(accountIndex);
+		accountIndex = manager.findAccountIndexByUsername(newUsername);
+		currentAccount = manager.getAccountByIndex(accountIndex);
 		myStage.setScene(getHomeScene());
 	}
 
@@ -260,16 +246,14 @@ public class NYTimesFX extends Application {
 	    btnPointsRedemption.setFont(Font.font("Times New Roman", FONT));
 	    btnPointsRedemption.setTextFill(Color.WHITE);
 	    btnPointsRedemption.setStyle("-fx-background-color: black;");
-	    //btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
-	    homeRoot.add(btnPointsRedemption, 2, 2, 2, 1); // Span 2 columns for the button
 	    btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
-	    homeRoot.add(btnPointsRedemption, 3, 2, 1, 1); // Span 1 column for the button
+	    homeRoot.add(btnPointsRedemption, 2, 2, 2, 1); // Span 2 columns for the button
 	    GridPane.setHalignment(btnPointsRedemption, HPos.CENTER);
 
 	    // Points Box
 	    VBox pointsBox = new VBox(GAP);
 	    pointsBox.setAlignment(Pos.CENTER);
-	    lblTrackPoints = new Label("Points: " + pointsAccount.getPoints());
+	    lblTrackPoints = new Label("Points: " + currentAccount.getPoints());
 	    lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
 	    pointsBox.getChildren().add(lblTrackPoints);
 	    homeRoot.add(pointsBox, 3, 4, 2, 1); // Span 2 columns for points
@@ -281,7 +265,6 @@ public class NYTimesFX extends Application {
 	private Scene getPointsRedemptionShopScene() {
 
 	    // Assuming you have an enum representing gifts (replace Gift with your actual enum)
-	    int rowIndex = 1; // Initialize rowIndex
 
 		GridPane redemptionRoot = new GridPane();
 		redemptionRoot.setHgap(GAP);
@@ -296,9 +279,9 @@ public class NYTimesFX extends Application {
 
 		// Mock data for the ComboBox, replace it with your actual items
 		ObservableList<String> itemNames = FXCollections.observableArrayList(
-		        RewardShop.ShopItem.ITEM1.getItemName(),
-		        RewardShop.ShopItem.ITEM2.getItemName(),
-		        RewardShop.ShopItem.ITEM3.getItemName()
+				AccountsManager.ShopItem.ITEM1.getItemName(),
+				AccountsManager.ShopItem.ITEM2.getItemName(),
+				AccountsManager.ShopItem.ITEM3.getItemName()
 		);
 
 		ComboBox<String> itemComboBox = new ComboBox<>(itemNames);
@@ -319,14 +302,14 @@ public class NYTimesFX extends Application {
 		 // Points Box
 	    VBox pointsBox = new VBox(GAP);
 	    pointsBox.setAlignment(Pos.CENTER);
-	    lblTrackPoints = new Label("Points: " + pointsAccount.getPoints());
+	    lblTrackPoints = new Label("Points: " + currentAccount.getPoints());
 	    lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
 	    pointsBox.getChildren().add(lblTrackPoints);
 	    redemptionRoot.add(pointsBox, 3, 4, 2, 1); // Span 2 columns for points
 	    GridPane.setHalignment(pointsBox, HPos.CENTER);
 		
     	// Assuming you have a method in your PointsRewardShop class to get the purchased items
- 		ArrayList<RewardShop.ShopItem> purchasedItems = pointsShop.getAccountByIndex(pointsAccount.getAccountIndex()).getPurchasedItems();
+ 		ArrayList<AccountsManager.ShopItem> purchasedItems = manager.getAccountByIndex(currentAccount.getAccountIndex()).getPurchasedItems();
 
  		VBox inventoryBox = new VBox(GAP);
  		inventoryBox.setAlignment(Pos.CENTER);
@@ -336,7 +319,7 @@ public class NYTimesFX extends Application {
 
  		ObservableList<String> inventoryItems = FXCollections.observableArrayList();
 
- 		for (RewardShop.ShopItem item : purchasedItems) {
+ 		for (AccountsManager.ShopItem item : purchasedItems) {
  		    inventoryItems.add(item.getItemName()); 
  		}
 
@@ -354,30 +337,26 @@ public class NYTimesFX extends Application {
 	    btnRedeemPoints.setOnAction(event -> {
 	        String selectedShopItemName = itemComboBox.getValue();
 	        if (selectedShopItemName != null) {
-	            RewardShop.ShopItem selectedShopItem = pointsShop.getShopItemByName(selectedShopItemName);
+	        	AccountsManager.ShopItem selectedShopItem = manager.getShopItemByName(selectedShopItemName);
 	            if (selectedShopItem != null) {
-	                boolean success = pointsShop.redeemItem(selectedShopItem, pointsAccount.getAccountIndex());
-	                if (success) {
-	                    // Handle successful redemption (e.g., display a message)
+	                boolean success = manager.redeemItem(selectedShopItem, currentAccount.getAccountIndex());
+	                if (success) { // Handle successful redemption (e.g., display a message)
 	                	purchasedItems.add(selectedShopItem);
 	                    showAlert(AlertType.INFORMATION, "Success", "Thank you for redeeming your points!");
-	                    lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+	                    lblTrackPoints.setText("Points: " + currentAccount.getPoints());
 	                    
 	                } else {
 	                    // Handle insufficient points (e.g., display an error message)
 	                    showAlert(AlertType.ERROR, "Error", "There was a system error, you do not have enough points for this item.");
-	                    lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+	                    lblTrackPoints.setText("Points: " + currentAccount.getPoints());
 	                }
 	            }
 	        } else {
 	            // Handle no item selected (e.g., display a message)
 	            showAlert(AlertType.ERROR, "Error", "There was no item selected.");
-	            lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+	            lblTrackPoints.setText("Points: " + currentAccount.getPoints());
 	        }
 	    });
-		
-		
-
 		return redemptionScene;
 	}
 
@@ -479,7 +458,7 @@ public class NYTimesFX extends Application {
 		 // Points Box
 	    VBox pointsBox = new VBox(GAP);
 	    pointsBox.setAlignment(Pos.CENTER);
-	    lblTrackPoints = new Label("Points: " + pointsAccount.getPoints());
+	    lblTrackPoints = new Label("Points: " + currentAccount.getPoints());
 	    lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
 	    pointsBox.getChildren().add(lblTrackPoints);
 	    wordleRoot.add(pointsBox, 3, 8, 2, 1); // Span 2 columns for points
@@ -528,16 +507,16 @@ public class NYTimesFX extends Application {
 					showAlert(AlertType.INFORMATION, "You Win!", "The word was: " + wordleGame.getKeyword());
 					win = true; 
 					gameEnded = true;
-					pointsShop.incLoyaltyPoints(win, pointsAccount.getAccountIndex());
-					lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
-					showAlert(AlertType.INFORMATION, "alert", "The word was: " + pointsAccount.getPoints());
+					manager.incLoyaltyPoints(win, currentAccount.getAccountIndex());
+					lblTrackPoints.setText("Points: " + currentAccount.getPoints());
+					showAlert(AlertType.INFORMATION, "alert", "The word was: " + currentAccount.getPoints());
 				} else if (WordleFX.isBoardFull(box)) {
 					showAlert(AlertType.INFORMATION, "alert", "The word was: " + wordleGame.getKeyword());
 					win = false; 
 					gameEnded = true;
-					pointsShop.incLoyaltyPoints(win, pointsAccount.getAccountIndex());
-					lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
-					showAlert(AlertType.INFORMATION, "alert", "The word was: " + pointsAccount.getPoints());
+					manager.incLoyaltyPoints(win, currentAccount.getAccountIndex());
+					lblTrackPoints.setText("Points: " + currentAccount.getPoints());
+					showAlert(AlertType.INFORMATION, "alert", "The word was: " + currentAccount.getPoints());
 				}
 			}
 

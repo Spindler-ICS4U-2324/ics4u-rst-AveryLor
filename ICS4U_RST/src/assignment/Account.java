@@ -19,7 +19,7 @@ public class Account {
 	private int userPoints; 
 
 	private boolean userHasItems;
-	private ArrayList<RewardShop.ShopItem> purchasedItems;
+	private ArrayList<AccountsManager.ShopItem> purchasedItems;
 	
 	 /**
      * Default constructor. Initializes an account with default values.
@@ -135,7 +135,7 @@ public class Account {
      *
      * @return The list of purchased items.
      */
-    public ArrayList<RewardShop.ShopItem> getPurchasedItems() {
+    public ArrayList<AccountsManager.ShopItem> getPurchasedItems() {
         return purchasedItems;
     }
     
@@ -145,7 +145,7 @@ public class Account {
      * @param item The item to check.
      * @return true if the item is already purchased, false otherwise.
      */
-    private boolean isItemPurchased(RewardShop.ShopItem item) {
+    private boolean isItemPurchased(AccountsManager.ShopItem item) {
         return purchasedItems.contains(item);
     }
 	
@@ -156,7 +156,7 @@ public class Account {
      * @param item The item to be purchased.
      * @return true if the item is successfully purchased, false otherwise.
      */
-    public boolean purchaseItem(RewardShop.ShopItem item) {
+    public boolean purchaseItem(AccountsManager.ShopItem item) {
         // Check if the item is not already purchased
         if (!isItemPurchased(item)) {
             // Add the item to the shopItems ArrayList
@@ -172,7 +172,7 @@ public class Account {
      *
      * @param purchasedItemsList The list of purchased items.
      */
-    public void setPurchasedItems(ArrayList<RewardShop.ShopItem> purchasedItemsList) {
+    public void setPurchasedItems(ArrayList<AccountsManager.ShopItem> purchasedItemsList) {
         this.purchasedItems = purchasedItemsList;
     }
     

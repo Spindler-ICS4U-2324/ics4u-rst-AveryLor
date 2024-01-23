@@ -143,18 +143,13 @@ public class WordleFX {
 	}
 	
 	public static boolean isRowFull(int numGuesses, Square[][] userBoard) {
-		int counter = 0; 
 		for (int col = 0; col < LENGTH; col++) {
-			if (userBoard[numGuesses][col].getLetter() != Square.BLANK) {
-				counter += 1; 
+			if (userBoard[numGuesses][col].getLetter() == Square.BLANK) {
+				return false; 
 			}
 		}
 		
-		if (counter == 5) {
-			return true; 
-		} else {
-			return false; 
-		}
+		return true; 
 	}
 	
 	public static boolean isBoardFull(Square[][] userBoard) {

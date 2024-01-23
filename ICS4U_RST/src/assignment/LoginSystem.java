@@ -1,12 +1,11 @@
 package assignment;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class LoginSystem {
 
@@ -15,70 +14,82 @@ public class LoginSystem {
 
 	public LoginSystem() {
 	    accountList = new ArrayList<>();
-	    
-	    try (BufferedReader reader = new BufferedReader(new FileReader(ALL_ACCOUNTS_FILE))) {
-	        String line;
-	        int i = 0;
-	        
-	        while ((line = reader.readLine()) != null) {
-	            String name = line;
-	            String password = reader.readLine();
-	            
-	            Account currentAccount = new Account(name, password);
-	            currentAccount.setAccountIndex(++i);
-	            accountList.add(currentAccount);
-	        }
-	        
-	        // Error Checking
-	    } catch (FileNotFoundException e) {
-	        e.printStackTrace();
-	    } catch (IOException a) {
-	        a.printStackTrace();
-	    }
 	}
+	
+	public void loadAllAccounts(String file) throws IOException {
+		try {
+			// Variables 
+			int numItems, points;
+			String line, username, password;
+			boolean userHasItems;
+
+			
+			// Instantiating
+			FileReader accountFile = new FileReader(file);
+			BufferedReader accountReader = new BufferedReader(accountFile);
+
+			// Reading all lines of the file 
+			while ((line = accountReader.readLine()) != null) {
+				username = line;
+				password = accountReader.readLine();
+				points = Integer.parseInt(accountReader.readLine()); 
+				userHasItems = Boolean.parseBoolean(accountReader.readLine());
+				
+				Account currentAccount = new Account(username, password);
+				currentAccount.setPoints(points);
+				currentAccount.setUserHasItems(userHasItems);
+				currentAccount.setAccountIndex(accountList.size());
+				accountList.add(currentAccount);
+				
+				if (userHasItems) {
+					numItems = Integer.parseInt(accountReader.readLine());
+					
+					ArrayList<RewardShop.ShopItem> purchasedItems = new ArrayList<>();
+
+					for (int i = 0; i < numItems; i++) {
+						String currentItem = accountReader.readLine();
+
+						RewardShop.ShopItem shopItem = RewardShop.ShopItem.valueOf(currentItem);
+						purchasedItems.add(shopItem);
+						
+						currentAccount.setPurchasedItems(purchasedItems);
+
+					}
+				}
+				
+			}
+			accountReader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException a) {
+			a.printStackTrace();
+		} catch (NumberFormatException g) {
+			g.printStackTrace();
+			// I did this to make the application seem to flow more coherently and since
+		}
+	}
+
+	
+	
 	
 	/**
-	 * Saves all account information to a specified file.
-	 *
-	 * @param file        The path of the file to which the information will be
-	 *                    saved.
-	 * 
-	 * @param accountInfo The list of accounts whose information needs to be saved.
-	 * 
-	 * @throws FileNotFoundException 
-	 * 		If the specified file cannot be found or created.
-	 * 
-	 * @throws IOException           
-	 * 		If an I/O error occurs while writing to the file.
-	 */
-	public void saveAllAccounts(String file) {
-		// Variables
-		String username, password; // Names 
-
-		try {
-			FileWriter fileWriter = new FileWriter(file); // Initialize FileWriter to write to the file
-			PrintWriter filePrinter = new PrintWriter(fileWriter); // Initialize FileReader to read from the file
-
-			for (Account temp : accountList) { // Goes through all the accounts within the data structure (ArrayList) 
-				// Gets all the pertinent information as described in the variables above through gettors 
-				username = temp.getUsername();
-				password = temp.getPassword();
-				
-				// Prints all the information into the text file 
-				filePrinter.println(username);
-				filePrinter.println(password);
-
-			}
-			fileWriter.close(); // Closes at the end 
-		} catch (FileNotFoundException e) { // If the file is not found
-			e.printStackTrace();
-		} catch (IOException a) { // Handles the IOException
-			a.printStackTrace();
-		} // Again used the .printStackTrace() for the same reasons outlined in the PointsRecorder class 
-	}
-	
-	
-	
+     * Sets the account list.
+     *
+     * @param accountList The ArrayList of accounts to set.
+     */
+    public void setAccountList(ArrayList<Account> accountList) {
+        this.accountList = accountList;
+    }
+    
+    /**
+     * Gets the account list.
+     *
+     * @return The ArrayList of accounts.
+     */
+    public ArrayList<Account> getAccountList() {
+        return accountList;
+    }
+    
 
 	public boolean checkCredentials(String password, String username) {
 	    for (Account account : accountList) {
@@ -96,11 +107,17 @@ public class LoginSystem {
 	    for (int i = 0; i < accountList.size(); i++) {
 	        allUserNames[i] = accountList.get(i).getUsername();
 	    }
+	    // Sort the array of usernames
+	    Arrays.sort(allUserNames);
 	    if (findUserName(allUserNames, username, 0, allUserNames.length - 1)) {
 	    	throw new IllegalArgumentException("This user name is already taken!");
 	    } else {
 	    	Account newAccount = new Account(username, password);
 	    	accountList.add(newAccount); 
+	    	newAccount.setAccountIndex(accountList.size());
+	    	newAccount.setUserHasItems(false);
+	    	newAccount.setPoints(0);
+	    	
 	    }
 		
 	}

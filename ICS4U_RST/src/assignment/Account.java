@@ -17,6 +17,7 @@ public class Account {
 	private String userPassword;  // Last name of the account 
 	private int accountIndex; // When instantiated each account is given an index. The PointsRecorder handles the assignment of accountIndex. 
 	private int userPoints; 
+	private boolean userHasItems;
 	private ArrayList<RewardShop.ShopItem> purchasedItems;
 	
 	 /**
@@ -31,7 +32,7 @@ public class Account {
 	/**
      * Overloaded Constructor. Initializes an account with the given first name, last name, and number of weeks.
      *
-     * @param userName 
+     * @param username 
      * 		The first name of the account holder.
      * 
      * @param userPassword  
@@ -40,8 +41,8 @@ public class Account {
      * @param numWeek   
      * 		The number of weeks.
      */
-	public Account(String userName, String userPassword) {
-		this.username = userName; 
+	public Account(String username, String userPassword) {
+		this.username = username; 
 		this.userPassword = userPassword;
 	}
 	
@@ -106,6 +107,24 @@ public class Account {
 	public int getPoints() {
 		return userPoints; 
 	}
+	
+	/**
+     * Sets whether the user has items.
+     *
+     * @param userHasItems The value indicating whether the user has items.
+     */
+    public void setUserHasItems(boolean userHasItems) {
+        this.userHasItems = userHasItems;
+    }
+
+    /**
+     * Checks whether the user has items.
+     *
+     * @return true if the user has items, false otherwise.
+     */
+    public boolean getHasUserItems() {
+        return userHasItems;
+    }
 	
 
     /**

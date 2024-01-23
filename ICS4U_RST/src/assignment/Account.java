@@ -17,13 +17,9 @@ public class Account {
 	private String userPassword;  // Last name of the account 
 	private int accountIndex; // When instantiated each account is given an index. The PointsRecorder handles the assignment of accountIndex. 
 	private int userPoints; 
-<<<<<<< HEAD
-	//private ArrayList<ShopItems>;
-	//private ShopItems[];
-=======
+
 	private boolean userHasItems;
 	private ArrayList<RewardShop.ShopItem> purchasedItems;
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 	
 	 /**
      * Default constructor. Initializes an account with default values.
@@ -113,11 +109,8 @@ public class Account {
 		return userPoints; 
 	}
 	
-<<<<<<< HEAD
-	public void purchaseItem(String itemName) {
-		
-	}
-=======
+
+
 	/**
      * Sets whether the user has items.
      *
@@ -184,6 +177,5 @@ public class Account {
     }
     
     
-    
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
+
 }

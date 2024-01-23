@@ -260,13 +260,10 @@ public class NYTimesFX extends Application {
 	    btnPointsRedemption.setFont(Font.font("Times New Roman", FONT));
 	    btnPointsRedemption.setTextFill(Color.WHITE);
 	    btnPointsRedemption.setStyle("-fx-background-color: black;");
-<<<<<<< HEAD
 	    //btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
 	    homeRoot.add(btnPointsRedemption, 2, 2, 2, 1); // Span 2 columns for the button
-=======
 	    btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
 	    homeRoot.add(btnPointsRedemption, 3, 2, 1, 1); // Span 1 column for the button
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 	    GridPane.setHalignment(btnPointsRedemption, HPos.CENTER);
 
 	    // Points Box
@@ -283,17 +280,14 @@ public class NYTimesFX extends Application {
 
 	private Scene getPointsRedemptionShopScene() {
 
-<<<<<<< HEAD
 	    // Assuming you have an enum representing gifts (replace Gift with your actual enum)
 	    int rowIndex = 1; // Initialize rowIndex
 
-=======
 		GridPane redemptionRoot = new GridPane();
 		redemptionRoot.setHgap(GAP);
 		redemptionRoot.setVgap(GAP);
 		redemptionRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		redemptionRoot.setAlignment(Pos.CENTER);
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 
 		Label lblTitle = new Label("Points Redemption Shop");
 		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
@@ -386,11 +380,7 @@ public class NYTimesFX extends Application {
 
 		return redemptionScene;
 	}
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 	private Scene getCreateAccountScene() {
 		GridPane newAccountRoot = new GridPane();
 		newAccountRoot.setHgap(GAP);

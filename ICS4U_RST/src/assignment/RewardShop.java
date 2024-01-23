@@ -21,16 +21,10 @@ public class RewardShop {
     private final String ALL_ACCOUNTS_FILE = "data/accountDB"; 
     
     public enum ShopItem {
-<<<<<<< HEAD
-        ITEM1("LCBO Giftcard", 20),
-        ITEM2("Costco Giftcard", 20),
-        ITEM3("Coffee", 10),
-    	ITEM4("Newspaper", 20); 
-=======
+
         ITEM1("LCBO Giftcard", 10),
         ITEM2("Newspaper", 20),
         ITEM3("Costco Giftcard", 30);
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 
         private final String itemName;
         private final int points;
@@ -40,10 +34,6 @@ public class RewardShop {
             this.points = points;
         }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
         public String getItemName() {
             return itemName;
         }
@@ -115,45 +105,11 @@ public class RewardShop {
 			// Using printStackTrace instead of the normal throw new
 			// IllegalArgumentException
 			g.printStackTrace();
+		}
 			// I did this to make the application seem to flow more coherently and since
 		}
 	
-<<<<<<< HEAD
-	public void loadAllAccounts(String file) throws FileNotFoundException, IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String username = line;
-                String password = reader.readLine();
-                int points = Integer.parseInt(reader.readLine());
-                String[] purchasedItems = reader.readLine().split(",");
 
-                // Create an Account instance and add it to the accountList
-                Account account = new Account(username, password);
-                account.setPoints(points);
-             
-            }
-=======
-		try (BufferedReader reader = new BufferedReader(new FileReader(ALL_ACCOUNTS_FILE))) {
-	        String line;
-	        int i = 0;
-	        
-	        while ((line = reader.readLine()) != null) {
-	            String name = line;
-	            String password = reader.readLine();
-	            
-	            Account currentAccount = new Account(name, password);
-	            currentAccount.setAccountIndex(++i);
-	            accountList.add(currentAccount);
-	        }
-	        
-	        // Error Checking
-	    } catch (FileNotFoundException e) {
-	        e.printStackTrace();
-	    } catch (IOException a) {
-	        a.printStackTrace();
-	    }
-	}
     
     /**
      * Sets the account list.
@@ -186,7 +142,6 @@ public class RewardShop {
             // Print the full stack trace of the exception
             e.printStackTrace();
             return null;
->>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
         }
     }
     /**

@@ -345,7 +345,7 @@ public class NYTimesFX extends Application {
  		GridPane.setHalignment(inventoryBox, HPos.CENTER);
 	    
 		// Assuming you have a method to handle points redemption in your RewardShop
-		// class//
+		// class///
 	    btnRedeemPoints.setOnAction(event -> {
 	        String selectedShopItemName = itemComboBox.getValue();
 	        if (selectedShopItemName != null) {

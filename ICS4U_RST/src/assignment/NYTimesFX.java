@@ -25,13 +25,21 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.FontWeight;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.control.ListView;
+import java.io.IOException;
+import java.util.ArrayList;
+import javafx.scene.layout.VBox;
 
 public class NYTimesFX extends Application {
 
 	private static final int GAP = 15;
 	private static final int LENGTH = 5;
 	private static final int HEIGHT = 6;
-	private static final int LARGE_FONT = 40; 
+	private static final int LARGE_FONT = 40;
 	private static final int FONT = 20;
 	private static final int SMALL_FONT = 15;
 	private static final int LOGIN_SCREEN_WIDTH = 400;
@@ -40,36 +48,43 @@ public class NYTimesFX extends Application {
 	private static final int HOME_SCREEN_HEIGHT = 1000;
 	private static final int WORDLE_SCREEN_WIDTH = 1100;
 	private static final int WORDLE_SCREEN_HEIGHT = 1100;
-	private static final int SHOP_SCREEN_WIDTH = 1000; 
-	private static final int SHOP_SCREEN_HEIGHT = 1000; 
-	
+	private static final int SHOP_SCREEN_WIDTH = 700;
+	private static final int SHOP_SCREEN_HEIGHT = 700;
+	private static final int INVENTORY_HEIGHT = 150; 
+
 	private LoginSystem loginCheck = new LoginSystem();
-	private WordleFX wordleGame; 
+	private WordleFX wordleGame;
 	private Square[][] box;
+	private RewardShop pointsShop = new RewardShop();
 	private Stage myStage;
+	private Account credentialsAccount, pointsAccount;
 
 	// JavaFX elements
-	private TextField txtUsername, txtPassword, txtNewUsername, txtNewPassword;
-	private BackgroundImage homepageBackgroundImage; 
-	private Background homepageBackground; 
-	private ImageView imgSymbol = new ImageView(getClass().getResource("/images/symbol.png").toString());
-    
-	
-	private String FILE = "data/accountDB";
-	private static int numGuesses = 0; 
-	private boolean gameEnded; 
-	private Scene wordleScene; 
+	TextField txtUsername, txtPassword, txtNewUsername, txtNewPassword;
+	BackgroundImage homepageBackgroundImage;
+	Background homepageBackground;
+	ImageView imgSymbol = new ImageView(getClass().getResource("/images/symbol.png").toString());
+	Label lblTrackPoints; 
 
-	
+	private String FILE = "data/accountDB";
+	private int numFullGuesses = 0;
+	private boolean gameEnded;
+	private Scene wordleScene;
+
 	@Override
-	public void stop() throws Exception { // At the end of the program, save all of the information into the text file 
-		loginCheck.saveAllAccounts(FILE);
+	public void stop() throws Exception { // At the end of the program, save all of the information into the text file
+		ArrayList<Account> accountList = loginCheck.getAccountList();
+		AccountInformation.saveAllAccounts(FILE, accountList);
+
 	}
-	
+
 	@Override
 	public void start(Stage myStage) throws Exception {
 		this.myStage = myStage;
-		
+
+		loginCheck.loadAllAccounts(FILE);
+		pointsShop.loadAllAccounts(FILE);
+
 		GridPane root = new GridPane();
 		root.setHgap(GAP);
 		root.setVgap(GAP);
@@ -80,9 +95,10 @@ public class NYTimesFX extends Application {
 		imgSymbol.setFitWidth(100); // Set the desired width
 		imgSymbol.setFitHeight(100); // Set the desired height
 		root.add(imgSymbol, 0, 0); // Assuming you want it in the top-right corner (adjust column index as needed)
-		
+
 		Label lblTitle = new Label();
-		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT)); // Change "Arial" to your desired font family
+		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT)); // Change "Arial" to your desired
+																						// font family
 		lblTitle.setText("Login Page");
 		root.add(lblTitle, 1, 0, 1, 1);
 		GridPane.setHalignment(lblTitle, HPos.LEFT);
@@ -96,7 +112,7 @@ public class NYTimesFX extends Application {
 		root.add(txtPassword, 1, 2);
 
 		Button btnSubmit = new Button();
-		btnSubmit.setFont(Font.font("Times New Roman",FONT));
+		btnSubmit.setFont(Font.font("Times New Roman", FONT));
 		btnSubmit.setText("Submit");
 		btnSubmit.setTextFill(Color.WHITE);
 		btnSubmit.setStyle("-fx-background-color: black;");
@@ -106,7 +122,7 @@ public class NYTimesFX extends Application {
 		GridPane.setHalignment(btnSubmit, HPos.CENTER);
 
 		Label lblUsername = new Label();
-		lblUsername.setFont(Font.font("Times New Roman",FONT));
+		lblUsername.setFont(Font.font("Times New Roman", FONT));
 		lblUsername.setText("Username:");
 		root.add(lblUsername, 0, 1, 1, 1);
 		GridPane.setHalignment(lblUsername, HPos.LEFT);
@@ -117,14 +133,14 @@ public class NYTimesFX extends Application {
 		root.add(lblPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblPassword, HPos.LEFT);
 
-		Label lblNoAccount = new Label(); 
+		Label lblNoAccount = new Label();
 		lblNoAccount.setFont(Font.font("Times New Roman", SMALL_FONT));
 		lblNoAccount.setText("Do not have an account? Create one below!");
-		root.add(lblNoAccount, 0, 5, 2, 1);  // Set row span to 2
+		root.add(lblNoAccount, 0, 5, 2, 1); // Set row span to 2
 		GridPane.setHalignment(lblNoAccount, HPos.CENTER);
-		
+
 		Button btnCreateNewAccount = new Button();
-		btnCreateNewAccount.setFont(Font.font("Times New Roman", FONT)); 
+		btnCreateNewAccount.setFont(Font.font("Times New Roman", FONT));
 		btnCreateNewAccount.setText("Create New Account");
 		btnCreateNewAccount.setStyle("-fx-background-color: black;");
 		btnCreateNewAccount.setTextFill(Color.WHITE);
@@ -132,13 +148,16 @@ public class NYTimesFX extends Application {
 		root.add(btnCreateNewAccount, 0, 6, 2, 1);
 		GridPane.setHalignment(btnCreateNewAccount, HPos.CENTER);
 
-	    // Creating a background image
-		Image image = new Image("/images/loginPageBG.png");
-		homepageBackgroundImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+		// Creating a background image
+		Image img = new Image("/images/loginPageBG.png");
+		homepageBackgroundImage = new BackgroundImage(img, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+		BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
 		homepageBackground = new Background(homepageBackgroundImage);
-	    root.setBackground(homepageBackground);
+		root.setBackground(homepageBackground);
 		
-	    // Setting the scene 
+		
+
+		// Setting the scene
 		Scene scene = new Scene(root, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
 		myStage.setTitle("NYTimesFX");
 		myStage.setScene(scene);
@@ -147,10 +166,16 @@ public class NYTimesFX extends Application {
 	}
 
 	private void checkCredentials() {
+		// Variables
 		String username = txtUsername.getText();
 		String password = txtPassword.getText();
+		int accountIndex;
 
 		if (loginCheck.checkCredentials(password, username)) {
+			accountIndex = loginCheck.findAccountIndexByUsername(username);
+			credentialsAccount = loginCheck.getAccountByIndex(accountIndex);
+			pointsAccount = pointsShop.getAccountByIndex(accountIndex);
+
 			myStage.setScene(getHomeScene());
 		} else {
 			showAlert(AlertType.ERROR, "Invalid Credentials", "Please enter a valid username and password.");
@@ -158,19 +183,33 @@ public class NYTimesFX extends Application {
 			txtPassword.clear();
 		}
 	}
-	
+
 	private void createNewAccount() {
-		String newUsername = txtNewUsername.getText();
-		String newPassword = txtNewPassword.getText();
-	
+		String newUsername, newPassword;
+		ArrayList<Account> accountList;
+		int accountIndex;
+
 		try {
+			newUsername = txtNewUsername.getText();
+			newPassword = txtNewPassword.getText();
 			loginCheck.createNewAccount(newUsername, newPassword);
-			myStage.setScene(getHomeScene());
 		} catch (IllegalArgumentException e) {
-			showAlert(AlertType.ERROR, "Username error", e.getMessage()); 
-			txtUsername.clear();
-			txtPassword.clear();
+			showAlert(AlertType.ERROR, "Username taken", e.getMessage());
+			txtNewUsername.clear();
+			txtNewPassword.clear();
+			return;
 		}
+		accountList = loginCheck.getAccountList();
+		AccountInformation.saveAllAccounts(FILE, accountList);
+		try {
+		pointsShop.loadAllAccounts(FILE);
+		} catch (IOException e) {
+			showAlert(AlertType.ERROR, "Error", e.getMessage()); 
+		}
+		accountIndex = loginCheck.findAccountIndexByUsername(newUsername);
+		credentialsAccount = loginCheck.getAccountByIndex(accountIndex);
+		pointsAccount = pointsShop.getAccountByIndex(accountIndex);
+		myStage.setScene(getHomeScene());
 	}
 
 	private Scene getHomeScene() {
@@ -180,78 +219,178 @@ public class NYTimesFX extends Application {
 	    homeRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 	    homeRoot.setAlignment(Pos.CENTER);
 
+	    // Header
 	    HBox headerBox = new HBox(GAP);
 	    headerBox.setAlignment(Pos.CENTER);
-
 	    imgSymbol.setFitWidth(100);
 	    imgSymbol.setFitHeight(100);
-
 	    Label lblHome = new Label("New York Times Home Page");
 	    lblHome.setFont(Font.font("Times New Roman", LARGE_FONT));
-
 	    headerBox.getChildren().addAll(imgSymbol, lblHome);
 	    homeRoot.add(headerBox, 0, 0, 2, 1); // Span 2 columns for header
 	    GridPane.setHalignment(headerBox, HPos.CENTER);
 
-	    ImageView wordle = new ImageView(getClass().getResource("/images/wordle.png").toString());
-	    wordle.setFitWidth(500);
-	    wordle.setFitHeight(500);
-
-	    StackPane wordlePane = new StackPane(wordle);
-	    homeRoot.add(wordlePane, 0, 1, 2, 1); // Span 2 columns for wordle
+	    // Wordle Image
+	    ImageView imgWordle = new ImageView(getClass().getResource("/images/wordle.png").toString());
+	    imgWordle.setFitWidth(300); // Adjust the width as needed
+	    imgWordle.setFitHeight(300); // Adjust the height as needed
+	    StackPane wordlePane = new StackPane(imgWordle);
+	    homeRoot.add(wordlePane, 1, 1, 2, 1); // Span 2 columns for wordle
 	    GridPane.setHalignment(wordlePane, HPos.CENTER);
+	    
+	    // Wordle Image
+	    ImageView imgPointsShop = new ImageView(getClass().getResource("/images/pointsRedemptionShop.png").toString());
+	    imgPointsShop.setFitWidth(300); // Adjust the width as needed
+	    imgPointsShop.setFitHeight(300); // Adjust the height as needed
+	    StackPane shopPane = new StackPane(imgPointsShop);
+	    homeRoot.add(shopPane, 2, 1, 2, 1); // Span 2 columns for wordle
+	    GridPane.setHalignment(shopPane, HPos.CENTER);
 
+	    // Wordle Button
 	    Button btnWordleGame = new Button("Wordle");
 	    btnWordleGame.setFont(Font.font("Times New Roman", FONT));
 	    btnWordleGame.setTextFill(Color.WHITE);
 	    btnWordleGame.setStyle("-fx-background-color: black;");
 	    btnWordleGame.setOnAction(event -> myStage.setScene(getWordleScene()));
-	    homeRoot.add(btnWordleGame, 0, 2, 2, 1); // Span 2 columns for the button
+	    homeRoot.add(btnWordleGame, 1, 2, 1, 1); // Span 1 column for the button
 	    GridPane.setHalignment(btnWordleGame, HPos.CENTER);
-	    
+
+	    // Shop Button
 	    Button btnPointsRedemption = new Button("Shop");
 	    btnPointsRedemption.setFont(Font.font("Times New Roman", FONT));
 	    btnPointsRedemption.setTextFill(Color.WHITE);
 	    btnPointsRedemption.setStyle("-fx-background-color: black;");
+<<<<<<< HEAD
 	    //btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
 	    homeRoot.add(btnPointsRedemption, 2, 2, 2, 1); // Span 2 columns for the button
+=======
+	    btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
+	    homeRoot.add(btnPointsRedemption, 3, 2, 1, 1); // Span 1 column for the button
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 	    GridPane.setHalignment(btnPointsRedemption, HPos.CENTER);
+
+	    // Points Box
+	    VBox pointsBox = new VBox(GAP);
+	    pointsBox.setAlignment(Pos.CENTER);
+	    lblTrackPoints = new Label("Points: " + pointsAccount.getPoints());
+	    lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
+	    pointsBox.getChildren().add(lblTrackPoints);
+	    homeRoot.add(pointsBox, 3, 4, 2, 1); // Span 2 columns for points
+	    GridPane.setHalignment(pointsBox, HPos.CENTER);
 
 	    return new Scene(homeRoot, HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT);
 	}
-	
-	
-	
-	
-	
-	private Scene getPointsRedemptionShop() {
-	    GridPane redemptionRoot = new GridPane();
-	    redemptionRoot.setHgap(GAP);
-	    redemptionRoot.setVgap(GAP);
-	    redemptionRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
-	    redemptionRoot.setAlignment(Pos.CENTER);
 
-	    Label lblTitle = new Label("Points Redemption Shop");
-	    lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
-	    redemptionRoot.add(lblTitle, 0, 0, 3, 1); // Span 3 columns for the label
-	    GridPane.setHalignment(lblTitle, HPos.CENTER);
+	private Scene getPointsRedemptionShopScene() {
 
+<<<<<<< HEAD
 	    // Assuming you have an enum representing gifts (replace Gift with your actual enum)
 	    int rowIndex = 1; // Initialize rowIndex
 
+=======
+		GridPane redemptionRoot = new GridPane();
+		redemptionRoot.setHgap(GAP);
+		redemptionRoot.setVgap(GAP);
+		redemptionRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
+		redemptionRoot.setAlignment(Pos.CENTER);
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 
-	    Button btnReturnHome = new Button();
-	    btnReturnHome.setFont(Font.font(SMALL_FONT));
-	    btnReturnHome.setText("Return Home");
-	    btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
-	    GridPane.setHalignment(btnReturnHome, HPos.CENTER);
-	    redemptionRoot.add(btnReturnHome, 0, rowIndex); // Added 1 to the rowIndex
+		Label lblTitle = new Label("Points Redemption Shop");
+		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
+		redemptionRoot.add(lblTitle, 0, 0, 3, 1); // Span 3 columns for the label
+		GridPane.setHalignment(lblTitle, HPos.CENTER);
 
-	    Scene redemptionScene = new Scene(redemptionRoot, SHOP_SCREEN_WIDTH, SHOP_SCREEN_HEIGHT);
+		// Mock data for the ComboBox, replace it with your actual items
+		ObservableList<String> itemNames = FXCollections.observableArrayList(
+		        RewardShop.ShopItem.ITEM1.getItemName(),
+		        RewardShop.ShopItem.ITEM2.getItemName(),
+		        RewardShop.ShopItem.ITEM3.getItemName()
+		);
 
-	    return redemptionScene;
+		ComboBox<String> itemComboBox = new ComboBox<>(itemNames);
+		itemComboBox.setPromptText("Select Item to Redeem");
+		redemptionRoot.add(itemComboBox, 0, 1);
+		Button btnRedeemPoints = new Button("Redeem Points");
+		btnRedeemPoints.setFont(Font.font(SMALL_FONT));
+		redemptionRoot.add(btnRedeemPoints, 0, 2);
+		GridPane.setHalignment(btnRedeemPoints, HPos.CENTER);
+
+		Button btnReturnHome = new Button("Return Home");
+		btnReturnHome.setFont(Font.font(SMALL_FONT));
+		btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
+		redemptionRoot.add(btnReturnHome, 0, 3); // Adjusted row index
+
+		Scene redemptionScene = new Scene(redemptionRoot, SHOP_SCREEN_WIDTH, SHOP_SCREEN_HEIGHT);
+
+		 // Points Box
+	    VBox pointsBox = new VBox(GAP);
+	    pointsBox.setAlignment(Pos.CENTER);
+	    lblTrackPoints = new Label("Points: " + pointsAccount.getPoints());
+	    lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
+	    pointsBox.getChildren().add(lblTrackPoints);
+	    redemptionRoot.add(pointsBox, 3, 4, 2, 1); // Span 2 columns for points
+	    GridPane.setHalignment(pointsBox, HPos.CENTER);
+		
+    	// Assuming you have a method in your PointsRewardShop class to get the purchased items
+ 		ArrayList<RewardShop.ShopItem> purchasedItems = pointsShop.getAccountByIndex(pointsAccount.getAccountIndex()).getPurchasedItems();
+
+ 		VBox inventoryBox = new VBox(GAP);
+ 		inventoryBox.setAlignment(Pos.CENTER);
+ 		Label lblInventoryTitle = new Label("Your Inventory");
+ 		lblInventoryTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, FONT));
+ 		inventoryBox.getChildren().add(lblInventoryTitle);
+
+ 		ObservableList<String> inventoryItems = FXCollections.observableArrayList();
+
+ 		for (RewardShop.ShopItem item : purchasedItems) {
+ 		    inventoryItems.add(item.getItemName()); 
+ 		}
+
+ 		// Create a ListView to display the inventory items
+ 		ListView<String> inventoryListView = new ListView<>(inventoryItems);
+ 		inventoryListView.setPrefHeight(INVENTORY_HEIGHT); // Adjust the height as needed
+ 		inventoryListView.setStyle("-fx-font-size: " + FONT + "pt"); // Set font size
+
+
+ 		redemptionRoot.add(inventoryBox, 3, 1, 2, 1); // Adjusted column and row indices
+ 		GridPane.setHalignment(inventoryBox, HPos.CENTER);
+	    
+		// Assuming you have a method to handle points redemption in your RewardShop
+		// class///
+	    btnRedeemPoints.setOnAction(event -> {
+	        String selectedShopItemName = itemComboBox.getValue();
+	        if (selectedShopItemName != null) {
+	            RewardShop.ShopItem selectedShopItem = pointsShop.getShopItemByName(selectedShopItemName);
+	            if (selectedShopItem != null) {
+	                boolean success = pointsShop.redeemItem(selectedShopItem, pointsAccount.getAccountIndex());
+	                if (success) {
+	                    // Handle successful redemption (e.g., display a message)
+	                	purchasedItems.add(selectedShopItem);
+	                    showAlert(AlertType.INFORMATION, "Success", "Thank you for redeeming your points!");
+	                    lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+	                    
+	                } else {
+	                    // Handle insufficient points (e.g., display an error message)
+	                    showAlert(AlertType.ERROR, "Error", "There was a system error, you do not have enough points for this item.");
+	                    lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+	                }
+	            }
+	        } else {
+	            // Handle no item selected (e.g., display a message)
+	            showAlert(AlertType.ERROR, "Error", "There was no item selected.");
+	            lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+	        }
+	    });
+		
+		
+
+		return redemptionScene;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 	private Scene getCreateAccountScene() {
 		GridPane newAccountRoot = new GridPane();
 		newAccountRoot.setHgap(GAP);
@@ -259,12 +398,13 @@ public class NYTimesFX extends Application {
 		newAccountRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		newAccountRoot.setAlignment(Pos.CENTER);
 
-		imgSymbol.setFitWidth(100); // Set the desired width
-		imgSymbol.setFitHeight(100); // Set the desired height
-		newAccountRoot.add(imgSymbol, 0, 0); // Assuming you want it in the top-right corner (adjust column index as needed)
-		
+		imgSymbol.setFitWidth(100); 
+		imgSymbol.setFitHeight(100); 
+		newAccountRoot.add(imgSymbol, 0, 0); 
+
 		Label lblTitle = new Label();
-		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT)); // Change "Arial" to your desired font family
+		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT)); 
+																						
 		lblTitle.setText("Create A New Account");
 		newAccountRoot.add(lblTitle, 1, 0, 1, 1);
 		GridPane.setHalignment(lblTitle, HPos.LEFT);
@@ -278,7 +418,7 @@ public class NYTimesFX extends Application {
 		newAccountRoot.add(txtNewPassword, 1, 2);
 
 		Label lblNewUsername = new Label();
-		lblNewUsername.setFont(Font.font("Times New Roman",FONT));
+		lblNewUsername.setFont(Font.font("Times New Roman", FONT));
 		lblNewUsername.setText("Enter Username:");
 		newAccountRoot.add(lblNewUsername, 0, 1, 1, 1);
 		GridPane.setHalignment(lblNewUsername, HPos.LEFT);
@@ -288,33 +428,30 @@ public class NYTimesFX extends Application {
 		lblNewPassword.setText("Enter Password:");
 		newAccountRoot.add(lblNewPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblNewPassword, HPos.LEFT);
-		
+
 		Button btnCreateNewAccount = new Button();
-		btnCreateNewAccount.setFont(Font.font("Times New Roman", FONT)); 
+		btnCreateNewAccount.setFont(Font.font("Times New Roman", FONT));
 		btnCreateNewAccount.setText("Create New Account");
 		btnCreateNewAccount.setTextFill(Color.WHITE);
 		btnCreateNewAccount.setStyle("-fx-background-color: black;");
 		btnCreateNewAccount.setOnAction(event -> createNewAccount());
 		newAccountRoot.add(btnCreateNewAccount, 0, 3, 2, 1);
 		GridPane.setHalignment(btnCreateNewAccount, HPos.CENTER);
-		
+
 		homepageBackground = new Background(homepageBackgroundImage);
-	    newAccountRoot.setBackground(homepageBackground);
+		newAccountRoot.setBackground(homepageBackground);
 
 		return new Scene(newAccountRoot, LOGIN_SCREEN_WIDTH + 300, LOGIN_SCREEN_HEIGHT);
 	}
-	
-	
-	
-	
+
 	private Scene getWordleScene() {
-		// Instantiating the WordleFX scene 
-		wordleGame = new WordleFX(); 
-		numGuesses = 0; 
-		
-		// Setting variables 
-		gameEnded = false; 
-		
+		// Instantiating the WordleFX scene
+		wordleGame = new WordleFX();
+		numFullGuesses = 0;
+
+		// Setting variables
+		gameEnded = false;
+
 		GridPane wordleRoot = new GridPane();
 		wordleRoot.setHgap(GAP);
 		wordleRoot.setVgap(GAP);
@@ -324,13 +461,13 @@ public class NYTimesFX extends Application {
 		imgSymbol.setFitWidth(100); // Set the desired width
 		imgSymbol.setFitHeight(100); // Set the desired height
 		wordleRoot.add(imgSymbol, 0, 0); // Assuming you want it in the top-right corner (adjust column index as needed)
-		
-		 // Adding label at the top
-	    Label lblTitle = new Label("Wordle");
-	    lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
-	    wordleRoot.add(lblTitle, 1, 0, 3, 1); // Span 3 columns for the label
-	    GridPane.setHalignment(lblTitle, HPos.CENTER);
-		
+
+		// Adding label at the top
+		Label lblTitle = new Label("Wordle");
+		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
+		wordleRoot.add(lblTitle, 1, 0, 3, 1); // Span 3 columns for the label
+		GridPane.setHalignment(lblTitle, HPos.CENTER);
+
 		box = new Square[HEIGHT][LENGTH];
 		for (int col = 0; col <= LENGTH - 1; col++) {
 			for (int row = 0; row <= HEIGHT - 1; row++) {
@@ -348,54 +485,89 @@ public class NYTimesFX extends Application {
 		btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
 		GridPane.setHalignment(btnReturnHome, HPos.CENTER);
 		wordleRoot.add(btnReturnHome, 2, 8); // Added 1 to the row index
+		
+		 // Points Box
+	    VBox pointsBox = new VBox(GAP);
+	    pointsBox.setAlignment(Pos.CENTER);
+	    lblTrackPoints = new Label("Points: " + pointsAccount.getPoints());
+	    lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
+	    pointsBox.getChildren().add(lblTrackPoints);
+	    wordleRoot.add(pointsBox, 3, 8, 2, 1); // Span 2 columns for points
+	    GridPane.setHalignment(pointsBox, HPos.CENTER);
 
 		wordleScene = new Scene(wordleRoot, WORDLE_SCREEN_WIDTH, WORDLE_SCREEN_HEIGHT);
 		wordleScene.setOnKeyPressed(event -> handleKeyStroke(event));
-
 
 		return wordleScene;
 	}
 
 	private void handleKeyStroke(KeyEvent event) {
-		// Variables 
+		// Variables
+		boolean win; 
 		boolean letterPlaced = false;
-	    char character = event.getCode().toString().charAt(0);
-	    
-	    // Game ended 
-	    if (gameEnded) {
-	    	return; 
-	    }
+		char character = event.getCode().toString().charAt(0);
 
-	    for (int row = 0; row < HEIGHT; row++) {
-	        for (int col = 0; col < LENGTH; col++) {
-	            if (box[row][col].getLetter() == Square.BLANK) {
-	                box[row][col].setLetter(character);
-	                letterPlaced = true;
-	                break; // exit the inner loop after placing the character
-	            }
-	        }
+		// Game ended
+		if (gameEnded) {
+			return;
+		}
 
-	        if (letterPlaced) {
-	            break; // exit the outer loop after placing the character
-	        }
-	    }
+		if (event.getCode() == KeyCode.BACK_SPACE) {
+			handleBackspace(); // Handle backspace key press
+			return;
+		}
 
-	    if (letterPlaced) {
-	        if (WordleFX.isRowFull(numGuesses, box)) {
-	        	numGuesses++; 
-	            if (wordleGame.wordClean(box, numGuesses - 1)) {
-	            	showAlert(AlertType.INFORMATION, "You Win!", "The word was: " + wordleGame.getKeyword()); 
-	            	gameEnded = true; 
-	            } else if (WordleFX.isBoardFull(box)) {
-	            	showAlert(AlertType.INFORMATION, "alert", "The word was: " + wordleGame.getKeyword()); 
-	            	gameEnded = true; 
+		for (int row = 0; row < HEIGHT; row++) {
+			for (int col = 0; col < LENGTH; col++) {
+				if (box[row][col].getLetter() == Square.BLANK) {
+					box[row][col].setLetter(character);
+					letterPlaced = true;
+					break; // exit the inner loop after placing the character
+				}
+			}
+
+			if (letterPlaced) {
+				break; // exit the outer loop after placing the character
+			}
+		}
+
+		if (letterPlaced) {
+			if (WordleFX.isRowFull(numFullGuesses, box)) {
+				numFullGuesses++;
+				if (wordleGame.wordClean(box, numFullGuesses - 1)) {
+					showAlert(AlertType.INFORMATION, "You Win!", "The word was: " + wordleGame.getKeyword());
+					win = true; 
+					gameEnded = true;
+					pointsShop.incLoyaltyPoints(win, pointsAccount.getAccountIndex());
+					lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+					showAlert(AlertType.INFORMATION, "alert", "The word was: " + pointsAccount.getPoints());
+				} else if (WordleFX.isBoardFull(box)) {
+					showAlert(AlertType.INFORMATION, "alert", "The word was: " + wordleGame.getKeyword());
+					win = false; 
+					gameEnded = true;
+					pointsShop.incLoyaltyPoints(win, pointsAccount.getAccountIndex());
+					lblTrackPoints.setText("Points: " + pointsAccount.getPoints());
+					showAlert(AlertType.INFORMATION, "alert", "The word was: " + pointsAccount.getPoints());
+				}
+			}
+
+		}
+	
+	}
+
+	
+	// TODO Fix the backspace algorithm 
+	private void handleBackspace() {
+	    // Handle backspace key press, e.g., clear the last filled letter
+	    for (int col = 0; col < LENGTH; col--) {
+	        for (int row = 0; row < HEIGHT; row--) {
+	            if (box[row][col].getLetter() != Square.BLANK) {
+	                box[row][col].setLetter(Square.BLANK);
+	                return; // exit the method after handling backspace
 	            }
 	        }
 	    }
 	}
-	
-
-
 
 	private void showAlert(AlertType alertType, String title, String message) {
 		Alert alert = new Alert(alertType);
@@ -404,6 +576,8 @@ public class NYTimesFX extends Application {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
+	
+	
 
 	public static void main(String[] args) {
 		launch(args);

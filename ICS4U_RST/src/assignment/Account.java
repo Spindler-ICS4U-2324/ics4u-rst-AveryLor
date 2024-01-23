@@ -8,6 +8,8 @@ package assignment;
  */
 
 
+import java.util.ArrayList;
+
 public class Account {
 
 	// Variables 
@@ -15,8 +17,13 @@ public class Account {
 	private String userPassword;  // Last name of the account 
 	private int accountIndex; // When instantiated each account is given an index. The PointsRecorder handles the assignment of accountIndex. 
 	private int userPoints; 
+<<<<<<< HEAD
 	//private ArrayList<ShopItems>;
 	//private ShopItems[];
+=======
+	private boolean userHasItems;
+	private ArrayList<RewardShop.ShopItem> purchasedItems;
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 	
 	 /**
      * Default constructor. Initializes an account with default values.
@@ -30,7 +37,7 @@ public class Account {
 	/**
      * Overloaded Constructor. Initializes an account with the given first name, last name, and number of weeks.
      *
-     * @param userName 
+     * @param username 
      * 		The first name of the account holder.
      * 
      * @param userPassword  
@@ -39,8 +46,8 @@ public class Account {
      * @param numWeek   
      * 		The number of weeks.
      */
-	public Account(String userName, String userPassword) {
-		this.username = userName; 
+	public Account(String username, String userPassword) {
+		this.username = username; 
 		this.userPassword = userPassword;
 	}
 	
@@ -106,7 +113,77 @@ public class Account {
 		return userPoints; 
 	}
 	
+<<<<<<< HEAD
 	public void purchaseItem(String itemName) {
 		
 	}
+=======
+	/**
+     * Sets whether the user has items.
+     *
+     * @param userHasItems The value indicating whether the user has items.
+     */
+    public void setUserHasItems(boolean userHasItems) {
+        this.userHasItems = userHasItems;
+    }
+
+    /**
+     * Checks whether the user has items.
+     *
+     * @return true if the user has items, false otherwise.
+     */
+    public boolean getHasUserItems() {
+        return userHasItems;
+    }
+	
+
+    /**
+     * Gets the list of purchased items for the account.
+     *
+     * @return The list of purchased items.
+     */
+    public ArrayList<RewardShop.ShopItem> getPurchasedItems() {
+        return purchasedItems;
+    }
+    
+    /**
+     * Check if the specified item is already purchased.
+     *
+     * @param item The item to check.
+     * @return true if the item is already purchased, false otherwise.
+     */
+    private boolean isItemPurchased(RewardShop.ShopItem item) {
+        return purchasedItems.contains(item);
+    }
+	
+	
+	/**
+     * Purchase the specified item and add it to the shopItems ArrayList.
+     *
+     * @param item The item to be purchased.
+     * @return true if the item is successfully purchased, false otherwise.
+     */
+    public boolean purchaseItem(RewardShop.ShopItem item) {
+        // Check if the item is not already purchased
+        if (!isItemPurchased(item)) {
+            // Add the item to the shopItems ArrayList
+        	purchasedItems.add(item);
+            return true; // Successful purchase
+        } else {
+            return false; // Item is already purchased
+        }
+    }
+    
+    /**
+     * Set the list of purchased items for the account.
+     *
+     * @param purchasedItemsList The list of purchased items.
+     */
+    public void setPurchasedItems(ArrayList<RewardShop.ShopItem> purchasedItemsList) {
+        this.purchasedItems = purchasedItemsList;
+    }
+    
+    
+    
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 }

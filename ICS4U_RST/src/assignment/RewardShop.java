@@ -12,21 +12,25 @@ import java.util.ArrayList;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 
 public class RewardShop {
     private ArrayList<Account> accountList; // ArrayList/data structure containing all of the Account instances 
-
+    private final String ALL_ACCOUNTS_FILE = "data/accountDB"; 
     
     public enum ShopItem {
+<<<<<<< HEAD
         ITEM1("LCBO Giftcard", 20),
         ITEM2("Costco Giftcard", 20),
         ITEM3("Coffee", 10),
     	ITEM4("Newspaper", 20); 
+=======
+        ITEM1("LCBO Giftcard", 10),
+        ITEM2("Newspaper", 20),
+        ITEM3("Costco Giftcard", 30);
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
 
         private final String itemName;
         private final int points;
@@ -36,6 +40,10 @@ public class RewardShop {
             this.points = points;
         }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
         public String getItemName() {
             return itemName;
         }
@@ -45,54 +53,72 @@ public class RewardShop {
         }
     }
     
+    
+    
+    
     /**
      * Constructor. Initializes an ArrayList that holds all of the accounts.  
      */
     public RewardShop() {
         accountList = new ArrayList<Account>();
     }
-
-    /**
-	 * Saves all account information to a specified file.
-	 *
-	 * @param file        The path of the file to which the information will be
-	 *                    saved.
-	 * 
-	 * @param accountInfo The list of accounts whose information needs to be saved.
-	 * 
-	 * @throws FileNotFoundException 
-	 * 		If the specified file cannot be found or created.
-	 * 
-	 * @throws IOException           
-	 * 		If an I/O error occurs while writing to the file.
-	 */
-	public void saveAllAccounts(String file) {
-		// Variables
-		String username, password; // Names 
-
+    
+    
+	public void loadAllAccounts(String file) throws IOException {
 		try {
-			FileWriter fileWriter = new FileWriter(file); // Initialize FileWriter to write to the file
-			PrintWriter filePrinter = new PrintWriter(fileWriter); // Initialize FileReader to read from the file
+			// Variables 
+			int numItems, points;
+			String line, username, password;
+			boolean userHasItems;
 
-			for (Account temp : accountList) { // Goes through all the accounts within the data structure (ArrayList) 
-				// Gets all the pertinent information as described in the variables above through gettors 
-				username = temp.getUsername();
-				password = temp.getPassword();
+			
+			// Instantiating
+			FileReader accountFile = new FileReader(file);
+			BufferedReader accountReader = new BufferedReader(accountFile);
+
+			// Reading all lines of the file 
+			while ((line = accountReader.readLine()) != null) {
+				username = line;
+				password = accountReader.readLine();
+				points = Integer.parseInt(accountReader.readLine()); 
+				userHasItems = Boolean.parseBoolean(accountReader.readLine());
 				
-				// Prints all the information into the text file 
-				filePrinter.println(username);
-				filePrinter.println(password);
+				Account currentAccount = new Account(username, password);
+				currentAccount.setPoints(points);
+				currentAccount.setUserHasItems(userHasItems);
+				currentAccount.setAccountIndex(accountList.size());
+				accountList.add(currentAccount);
+				
+				if (userHasItems) {
+					numItems = Integer.parseInt(accountReader.readLine());
+					
+					ArrayList<RewardShop.ShopItem> purchasedItems = new ArrayList<>();
 
+					for (int i = 0; i < numItems; i++) {
+						String currentItem = accountReader.readLine();
+
+						RewardShop.ShopItem shopItem = RewardShop.ShopItem.valueOf(currentItem);
+						purchasedItems.add(shopItem);
+						
+						currentAccount.setPurchasedItems(purchasedItems);
+
+					}
+				}
+				
 			}
-			fileWriter.close(); // Closes at the end 
-		} catch (FileNotFoundException e) { // If the file is not found
+			accountReader.close();
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException a) { // Handles the IOException
+		} catch (IOException a) {
 			a.printStackTrace();
-		} // Again used the .printStackTrace() for the same reasons outlined in the PointsRecorder class 
-	}
-
+		} catch (NumberFormatException g) {
+			// Using printStackTrace instead of the normal throw new
+			// IllegalArgumentException
+			g.printStackTrace();
+			// I did this to make the application seem to flow more coherently and since
+		}
 	
+<<<<<<< HEAD
 	public void loadAllAccounts(String file) throws FileNotFoundException, IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -107,34 +133,99 @@ public class RewardShop {
                 account.setPoints(points);
              
             }
+=======
+		try (BufferedReader reader = new BufferedReader(new FileReader(ALL_ACCOUNTS_FILE))) {
+	        String line;
+	        int i = 0;
+	        
+	        while ((line = reader.readLine()) != null) {
+	            String name = line;
+	            String password = reader.readLine();
+	            
+	            Account currentAccount = new Account(name, password);
+	            currentAccount.setAccountIndex(++i);
+	            accountList.add(currentAccount);
+	        }
+	        
+	        // Error Checking
+	    } catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	    } catch (IOException a) {
+	        a.printStackTrace();
+	    }
+	}
+    
+    /**
+     * Sets the account list.
+     *
+     * @param accountList The ArrayList of accounts to set.
+     */
+    public void setAccountList(ArrayList<Account> accountList) {
+        this.accountList = accountList;
+    }
+    
+    /**
+     * Gets the account list.
+     *
+     * @return The ArrayList of accounts.
+     */
+    public ArrayList<Account> getAccountList() {
+        return accountList;
+    }
+    
+    /**
+     * Gets the Account instance for the given account index.
+     *
+     * @param accountIndex The index of the account.
+     * @return The Account instance if the index is valid, or null if not found.
+     */
+    public Account getAccountByIndex(int accountIndex) {
+        try {
+            return accountList.get(accountIndex); // Return the Account instance if the index is valid
+        } catch (IndexOutOfBoundsException e) {
+            // Print the full stack trace of the exception
+            e.printStackTrace();
+            return null;
+>>>>>>> branch 'main' of https://github.com/Spindler-ICS4U-2324/ics4u-rst-AveryLor.git
         }
     }
+    /**
+     * Retrieves a ShopItem based on its name.
+     *
+     * @param itemName The name of the ShopItem.
+     * @return The ShopItem with the specified name, or null if not found.
+     */
+    public ShopItem getShopItemByName(String itemName) {
+        for (ShopItem shopItem : ShopItem.values()) {
+            if (shopItem.getItemName().equals(itemName)) {
+                return shopItem;
+            }
+        }
+        return null; // Item not found
+    }
+    
+    
 
-	
-	
-	public boolean redeemItem(ShopItem item, int accountIndex) {
+
+    public boolean redeemItem(ShopItem item, int accountIndex) {
         Account currentAccount = accountList.get(accountIndex);
         int requiredPoints = item.getPoints();
 
         if (currentAccount.getPoints() >= requiredPoints) {
             currentAccount.setPoints(currentAccount.getPoints() - requiredPoints);
-            currentAccount.purchaseItem(item.name()); // Assuming the item name is the same as the enum constant
+            currentAccount.purchaseItem(item);
             return true; // Successful redemption
         } else {
             return false; // Insufficient points for redemption
         }
     }
-	
-    
+
     public void incLoyaltyPoints(boolean win, int accountIndex) {
-    	Account currentAccount = accountList.get(accountIndex);
-    	if (win == true) {
-    		currentAccount.setPoints(currentAccount.getPoints() + 100);
-    	} else {
-    		currentAccount.setPoints(currentAccount.getPoints() + 50);
-    	}
+        Account currentAccount = accountList.get(accountIndex);
+        if (win) {
+            currentAccount.setPoints(currentAccount.getPoints() + 100);
+        } else {
+            currentAccount.setPoints(currentAccount.getPoints() + 50);
+        }
     }
-    
-
-
 }

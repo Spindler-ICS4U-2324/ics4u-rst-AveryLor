@@ -122,7 +122,6 @@ public class AccountsManager {
 	
 	
 	public void createNewAccount(String username, String password) {
-	    // Assuming accountList is an ArrayList<String>
 	    String[] allUserNames = new String[accountList.size()];
 	    for (int i = 0; i < accountList.size(); i++) {
 	        allUserNames[i] = accountList.get(i).getUsername();

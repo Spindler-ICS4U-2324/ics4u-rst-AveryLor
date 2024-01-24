@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class WordleFX {
 	
@@ -116,6 +117,71 @@ public class WordleFX {
 		
 		return keyword; 
 	}
+	
+	public static boolean isWordValid(String userGuess) {
+		// Variable
+		String line;
+
+		// Processing
+		ArrayList<String> allWordleWords = new ArrayList<String>();
+
+		try {
+			FileReader wordFile = new FileReader("data/wordleWords");
+			BufferedReader fileReader = new BufferedReader(wordFile);
+
+			while ((line = fileReader.readLine()) != null) {
+				allWordleWords.add(line);
+			}
+			fileReader.close();
+
+			// Error Checking
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException a) {
+			a.printStackTrace();
+		}
+		
+		String[] allWords = new String[allWordleWords.size()];
+	    for (int i = 0; i < allWordleWords.size(); i++) {
+	    	allWords[i] = allWordleWords.get(i).toUpperCase();
+	    }
+	    // Sort the array of usernames
+	    Arrays.sort(allWords);
+	    System.out.println("All words before sorting: " + Arrays.toString(allWords));
+	    
+	    // Return 
+		return findWord(allWords, userGuess, 0, allWords.length - 1);
+	}
+	
+	// Helper method to get the current word from the box
+	public static String getCurrentWord(Square[][] box, int numGuess) {
+		StringBuilder wordBuilder = new StringBuilder();
+		for (int col = 0; col < LENGTH; col++) {
+			wordBuilder.append(box[numGuess][col].getLetter());
+		}
+		return wordBuilder.toString();
+	}
+	
+	
+	public static boolean findWord(String[] allWords, String word, int left, int right) {
+		if (left > right) {
+			return false; // element not found
+		}
+
+		int middle = (left + right) / 2;
+
+		if (allWords[middle].equals(word)) { // element was found!
+			return true;
+		}
+
+		if (allWords[middle].compareTo(word) > 0) {
+			return findWord(allWords, word, left, middle - 1); // check the left side
+		} else {
+			return findWord(allWords, word, middle + 1, right); // check the right side
+		}
+	}
+	
+	
 	
 	public static ArrayList<Character> uniqueCharacters(String keyword) {
 		// Variables 

@@ -334,6 +334,11 @@ public class NYTimesFX extends Application {
 	    inventoryRoot.add(btnReturnHome, 0, 3, 2, 1); // Span 2 columns for the button
 	    GridPane.setHalignment(btnReturnHome, HPos.CENTER);
 
+	    Image imgInventoryPageBackground = new Image("/images/inventoryBG.png");
+		BackgroundImage inventoryPageBackgroundImage = new BackgroundImage(imgInventoryPageBackground, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+		Background inventoryPageBackground = new Background(inventoryPageBackgroundImage);
+		inventoryRoot.setBackground(inventoryPageBackground);
+	    
 	    return new Scene(inventoryRoot, INVENTORY_SCREEN_WIDTH, INVENTORY_SCREEN_HEIGHT);
 	}
 
@@ -480,6 +485,11 @@ public class NYTimesFX extends Application {
 	            lblTrackPoints.setText("Points: " + currentAccount.getPoints());
 	        }
 	    });
+	    Image imgShopPageBackground = new Image("/images/wordleBG.png");
+		BackgroundImage shopPageBackgroundImage = new BackgroundImage(imgShopPageBackground, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+		Background shopPageBackground = new Background(shopPageBackgroundImage);
+		redemptionRoot.setBackground(shopPageBackground);
+	    
 		return redemptionScene;
 	}
 
@@ -552,7 +562,7 @@ public class NYTimesFX extends Application {
 
 		imgSymbol.setFitWidth(100); // Set the desired width
 		imgSymbol.setFitHeight(100); // Set the desired height
-		wordleRoot.add(imgSymbol, 0, 0); // Assuming you want it in the top-right corner (adjust column index as needed)
+		wordleRoot.add(imgSymbol, 0, 0, 2, 1); // Assuming you want it in the top-right corner (adjust column index as needed)
 
 		// Adding label at the top
 		Label lblTitle = new Label("Wordle");
@@ -575,8 +585,9 @@ public class NYTimesFX extends Application {
 		btnReturnHome.setTextFill(Color.WHITE);
 		btnReturnHome.setStyle("-fx-background-color: black;");
 		btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
+		wordleRoot.add(btnReturnHome, 1, 8, 3, 1); // Added 1 to the row index
 		GridPane.setHalignment(btnReturnHome, HPos.CENTER);
-		wordleRoot.add(btnReturnHome, 2, 8); // Added 1 to the row index
+
 		
 		 // Points Box
 	    VBox pointsBox = new VBox(GAP);
@@ -586,6 +597,11 @@ public class NYTimesFX extends Application {
 	    pointsBox.getChildren().add(lblTrackPoints);
 	    wordleRoot.add(pointsBox, 3, 8, 2, 1); // Span 2 columns for points
 	    GridPane.setHalignment(pointsBox, HPos.CENTER);
+	    
+	    Image imgWordlePageBackground = new Image("/images/wordleBG.png");
+		BackgroundImage wordlePageBackgroundImage = new BackgroundImage(imgWordlePageBackground, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+		Background wordlePageBackground = new Background(wordlePageBackgroundImage);
+		wordleRoot.setBackground(wordlePageBackground);
 
 		wordleScene = new Scene(wordleRoot, WORDLE_SCREEN_WIDTH, WORDLE_SCREEN_HEIGHT);
 		wordleScene.setOnKeyPressed(event -> handleKeyStroke(event));
@@ -608,7 +624,8 @@ public class NYTimesFX extends Application {
 			handleBackspace(); // Handle backspace key press
 			return;
 		}
-
+		
+		// Check if the entered character forms a valid word
 		for (int row = 0; row < HEIGHT; row++) {
 			for (int col = 0; col < LENGTH; col++) {
 				if (box[row][col].getLetter() == Square.BLANK) {
@@ -623,8 +640,15 @@ public class NYTimesFX extends Application {
 			}
 		}
 
-		if (letterPlaced) {
+		if (letterPlaced) {		
 			if (WordleFX.isRowFull(numFullGuesses, box)) {
+				String currentGuess = WordleFX.getCurrentWord(box, numFullGuesses);
+			    if (WordleFX.isWordValid(currentGuess) == false) { // Display an error message or take appropriate action
+			    	handleInvalidWord(numFullGuesses); 
+			        showAlert(AlertType.ERROR, "Invalid Word", "The entered word, " + currentGuess + " is not a valid word!");
+			        return;
+			    }
+				
 				numFullGuesses++;
 				if (wordleGame.wordClean(box, numFullGuesses - 1)) {
 					showAlert(AlertType.INFORMATION, "You Win!", "The word was: " + wordleGame.getKeyword());
@@ -648,16 +672,24 @@ public class NYTimesFX extends Application {
 	}
 
 	
-	// TODO Fix the backspace algorithm 
 	private void handleBackspace() {
 	    // Handle backspace key press, e.g., clear the last filled letter
-	    for (int col = 0; col < LENGTH; col--) {
-	        for (int row = 0; row < HEIGHT; row--) {
+	    for (int col = LENGTH - 1; col >= 0; col--) {
+	        for (int row = HEIGHT - 1; row >= 0; row--) {
 	            if (box[row][col].getLetter() != Square.BLANK) {
-	                box[row][col].setLetter(Square.BLANK);
-	                return; // exit the method after handling backspace
+	                if (numFullGuesses == 0 || !WordleFX.isRowFull(row, box)) {
+	                    box[row][col].setLetter(Square.BLANK);
+	                    return;
+	                }
 	            }
 	        }
+	    }
+	}
+	
+	private void handleInvalidWord(int numFullGuesses) {
+	    // Handle backspace key press, e.g., clear the last filled letter
+	    for (int col = 0; col < LENGTH; col++) {
+	    	box[numFullGuesses][col].setLetter(Square.BLANK);
 	    }
 	}
 

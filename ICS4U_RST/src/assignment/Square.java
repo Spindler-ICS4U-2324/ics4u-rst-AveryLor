@@ -108,8 +108,8 @@ public class Square extends Button {
 
 		// Create the ImageView and Label
 		ImageView imageView = new ImageView(IMG_YELLOW);
-		imageView.setFitWidth(90);
-		imageView.setFitHeight(90);
+		imageView.setFitWidth(SQUARE_SIZE);
+		imageView.setFitHeight(SQUARE_SIZE);
 
 		letterLabel = new Label();
 		letterLabel.setFont(Font.font(FONT));
@@ -127,8 +127,8 @@ public class Square extends Button {
 
 		// Create the ImageView and Label
 		ImageView imageView = new ImageView(IMG_GRAY);
-		imageView.setFitWidth(90);
-		imageView.setFitHeight(90);
+		imageView.setFitWidth(SQUARE_SIZE);
+		imageView.setFitHeight(SQUARE_SIZE);
 
 		letterLabel = new Label();
 		letterLabel.setFont(Font.font(FONT));

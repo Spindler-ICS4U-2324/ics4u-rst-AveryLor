@@ -44,23 +44,27 @@ public class NYTimesFX extends Application {
 	private static final int LOGIN_SCREEN_WIDTH = 400;
 	private static final int LOGIN_SCREEN_HEIGHT = 500;
 	private static final int HOME_SCREEN_WIDTH = 1000;
-	private static final int HOME_SCREEN_HEIGHT = 1000;
-	private static final int WORDLE_SCREEN_WIDTH = 1100;
-	private static final int WORDLE_SCREEN_HEIGHT = 1100;
-	private static final int SHOP_SCREEN_WIDTH = 700;
+	private static final int HOME_SCREEN_HEIGHT = 700;
+	private static final int WORDLE_SCREEN_WIDTH = 1000;
+	private static final int WORDLE_SCREEN_HEIGHT = 700;
+	private static final int SHOP_SCREEN_WIDTH = 1000;
 	private static final int SHOP_SCREEN_HEIGHT = 700;
-	private static final int INVENTORY_HEIGHT = 150; 
+	private static final int INVENTORY_SCREEN_WIDTH = 1000; 
+	private static final int INVENTORY_SCREEN_HEIGHT = 700; 
+	private static final int PRODUCT_SIZE = 200; 
+
 
 	private AccountsManager manager = new AccountsManager();
 	private WordleFX wordleGame;
 	private Square[][] box;
 	private Stage myStage;
 	private Account currentAccount;
+	private String selectedItem; 
 
 	// JavaFX elements
 	TextField txtUsername, txtPassword, txtNewUsername, txtNewPassword;
-	BackgroundImage homepageBackgroundImage;
-	Background homepageBackground;
+	BackgroundImage loginPageBackgroundImage;
+	Background loginPageBackground;
 	ImageView imgSymbol = new ImageView(getClass().getResource("/images/symbol.png").toString());
 	Label lblTrackPoints; 
 
@@ -145,10 +149,10 @@ public class NYTimesFX extends Application {
 
 		// Creating a background image
 		Image img = new Image("/images/loginPageBG.png");
-		homepageBackgroundImage = new BackgroundImage(img, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+		loginPageBackgroundImage = new BackgroundImage(img, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
 		BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
-		homepageBackground = new Background(homepageBackgroundImage);
-		root.setBackground(homepageBackground);
+		loginPageBackground = new Background(loginPageBackgroundImage);
+		root.setBackground(loginPageBackground);
 
 		// Setting the scene
 		Scene scene = new Scene(root, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
@@ -213,7 +217,7 @@ public class NYTimesFX extends Application {
 	    Label lblHome = new Label("New York Times Home Page");
 	    lblHome.setFont(Font.font("Times New Roman", LARGE_FONT));
 	    headerBox.getChildren().addAll(imgSymbol, lblHome);
-	    homeRoot.add(headerBox, 0, 0, 2, 1); // Span 2 columns for header
+	    homeRoot.add(headerBox, 1, 0, 6, 1); // Span 3 columns for header
 	    GridPane.setHalignment(headerBox, HPos.CENTER);
 
 	    // Wordle Image
@@ -221,16 +225,8 @@ public class NYTimesFX extends Application {
 	    imgWordle.setFitWidth(300); // Adjust the width as needed
 	    imgWordle.setFitHeight(300); // Adjust the height as needed
 	    StackPane wordlePane = new StackPane(imgWordle);
-	    homeRoot.add(wordlePane, 1, 1, 2, 1); // Span 2 columns for wordle
+	    homeRoot.add(wordlePane, 0, 1, 2, 1); // Span 2 columns for wordle
 	    GridPane.setHalignment(wordlePane, HPos.CENTER);
-	    
-	    // Wordle Image
-	    ImageView imgPointsShop = new ImageView(getClass().getResource("/images/pointsRedemptionShop.png").toString());
-	    imgPointsShop.setFitWidth(300); // Adjust the width as needed
-	    imgPointsShop.setFitHeight(300); // Adjust the height as needed
-	    StackPane shopPane = new StackPane(imgPointsShop);
-	    homeRoot.add(shopPane, 2, 1, 2, 1); // Span 2 columns for wordle
-	    GridPane.setHalignment(shopPane, HPos.CENTER);
 
 	    // Wordle Button
 	    Button btnWordleGame = new Button("Wordle");
@@ -240,6 +236,14 @@ public class NYTimesFX extends Application {
 	    btnWordleGame.setOnAction(event -> myStage.setScene(getWordleScene()));
 	    homeRoot.add(btnWordleGame, 1, 2, 1, 1); // Span 1 column for the button
 	    GridPane.setHalignment(btnWordleGame, HPos.CENTER);
+	    
+	    // Points Shop
+	    ImageView imgPointsShop = new ImageView(getClass().getResource("/images/pointsRedemptionShop.png").toString());
+	    imgPointsShop.setFitWidth(300); // Adjust the width as needed
+	    imgPointsShop.setFitHeight(300); // Adjust the height as needed
+	    StackPane shopPane = new StackPane(imgPointsShop);
+	    homeRoot.add(shopPane, 3, 1, 2, 1); // Span 2 columns for wordle
+	    GridPane.setHalignment(shopPane, HPos.CENTER);
 
 	    // Shop Button
 	    Button btnPointsRedemption = new Button("Shop");
@@ -247,8 +251,25 @@ public class NYTimesFX extends Application {
 	    btnPointsRedemption.setTextFill(Color.WHITE);
 	    btnPointsRedemption.setStyle("-fx-background-color: black;");
 	    btnPointsRedemption.setOnAction(event -> myStage.setScene(getPointsRedemptionShopScene()));
-	    homeRoot.add(btnPointsRedemption, 2, 2, 2, 1); // Span 2 columns for the button
+	    homeRoot.add(btnPointsRedemption, 3, 2, 2, 1); // Span 2 columns for the button
 	    GridPane.setHalignment(btnPointsRedemption, HPos.CENTER);
+
+	    // Inventory Image
+	    ImageView imgInventory = new ImageView(getClass().getResource("/images/inventory.png").toString());
+	    imgInventory.setFitWidth(300); // Adjust the width as needed
+	    imgInventory.setFitHeight(300); // Adjust the height as needed
+	    StackPane inventoryPane = new StackPane(imgInventory);
+	    homeRoot.add(inventoryPane, 6, 1, 2, 1); // Span 2 columns for wordle
+	    GridPane.setHalignment(inventoryPane, HPos.CENTER);
+	    
+	    // Inventory Button
+	    Button btnInventory = new Button("Inventory");
+	    btnInventory.setFont(Font.font("Times New Roman", FONT));
+	    btnInventory.setTextFill(Color.WHITE);
+	    btnInventory.setStyle("-fx-background-color: black;");
+	    btnInventory.setOnAction(event -> myStage.setScene(getInventoryScene()));
+	    homeRoot.add(btnInventory, 7, 2, 1, 1); // Span 1 column for the button
+	    GridPane.setHalignment(btnInventory, HPos.LEFT);
 
 	    // Points Box
 	    VBox pointsBox = new VBox(GAP);
@@ -258,55 +279,173 @@ public class NYTimesFX extends Application {
 	    pointsBox.getChildren().add(lblTrackPoints);
 	    homeRoot.add(pointsBox, 3, 4, 2, 1); // Span 2 columns for points
 	    GridPane.setHalignment(pointsBox, HPos.CENTER);
+	    
+	    Image imgHomePageBackground = new Image("/images/homePageBG.png");
+		BackgroundImage homePageBackgroundImage = new BackgroundImage(imgHomePageBackground, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+		Background homePageBackground = new Background(homePageBackgroundImage);
+		homeRoot.setBackground(homePageBackground);
 
 	    return new Scene(homeRoot, HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT);
 	}
 
+	private Scene getInventoryScene() {
+	    GridPane inventoryRoot = new GridPane();
+	    inventoryRoot.setHgap(GAP);
+	    inventoryRoot.setVgap(GAP);
+	    inventoryRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
+	    inventoryRoot.setAlignment(Pos.CENTER);
+
+	    // Title
+	    Label lblInventoryTitle = new Label("Your Inventory");
+	    lblInventoryTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
+	    inventoryRoot.add(lblInventoryTitle, 0, 0, 2, 1); // Span 2 columns for the title
+	    GridPane.setHalignment(lblInventoryTitle, HPos.CENTER);
+
+	    // Description Label
+	    Label lblInventoryDescription = new Label("Here are the items you have redeemed:");
+	    lblInventoryDescription.setFont(Font.font("Times New Roman", FONT));
+	    inventoryRoot.add(lblInventoryDescription, 0, 1, 2, 1); // Span 2 columns for the description
+	    GridPane.setHalignment(lblInventoryDescription, HPos.CENTER);
+
+	    // Assuming you have a method in your PointsRewardShop class to get the purchased items
+	    ArrayList<AccountsManager.ShopItem> userItems = manager.getAccountByIndex(currentAccount.getAccountIndex()).getPurchasedItems();
+
+	    // Create an ObservableList for the inventory items
+	    ObservableList<String> inventoryItems = FXCollections.observableArrayList();
+
+	    for (AccountsManager.ShopItem item : userItems) {
+	        inventoryItems.add(item.getItemName()); // Assuming ShopItem has a getName() method
+	    }
+
+	    // Create a ListView to display the inventory items
+	    ListView<String> inventoryListView = new ListView<>(inventoryItems);
+	    inventoryListView.setPrefHeight(150); // Adjust the height as needed
+	    inventoryListView.setStyle("-fx-font-size: " + FONT + "pt"); // Set font size
+
+	    inventoryRoot.add(inventoryListView, 0, 2, 2, 1); // Span 2 columns for the ListView
+	    GridPane.setHalignment(inventoryListView, HPos.CENTER);
+
+	    // Return Home Button
+	    Button btnReturnHome = new Button("Return Home");
+	    btnReturnHome.setFont(Font.font("Times New Roman", FONT));
+	    btnReturnHome.setTextFill(Color.WHITE);
+	    btnReturnHome.setStyle("-fx-background-color: black;");
+	    btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene())); // Set the action to return to the home scene
+	    inventoryRoot.add(btnReturnHome, 0, 3, 2, 1); // Span 2 columns for the button
+	    GridPane.setHalignment(btnReturnHome, HPos.CENTER);
+
+	    return new Scene(inventoryRoot, INVENTORY_SCREEN_WIDTH, INVENTORY_SCREEN_HEIGHT);
+	}
+
 	private Scene getPointsRedemptionShopScene() {
-
-	    // Assuming you have an enum representing gifts (replace Gift with your actual enum)
-
+		// Assuming you have an enum representing gifts (replace Gift with your actual enum)
 		GridPane redemptionRoot = new GridPane();
 		redemptionRoot.setHgap(GAP);
 		redemptionRoot.setVgap(GAP);
 		redemptionRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		redemptionRoot.setAlignment(Pos.CENTER);
 
+		Scene redemptionScene = new Scene(redemptionRoot, SHOP_SCREEN_WIDTH, SHOP_SCREEN_HEIGHT);
+
 		Label lblTitle = new Label("Points Redemption Shop");
 		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT));
 		redemptionRoot.add(lblTitle, 0, 0, 3, 1); // Span 3 columns for the label
 		GridPane.setHalignment(lblTitle, HPos.CENTER);
 
-		// Mock data for the ComboBox, replace it with your actual items
-		ObservableList<String> itemNames = FXCollections.observableArrayList(
-				AccountsManager.ShopItem.ITEM1.getItemName(),
-				AccountsManager.ShopItem.ITEM2.getItemName(),
-				AccountsManager.ShopItem.ITEM3.getItemName()
-		);
 
-		ComboBox<String> itemComboBox = new ComboBox<>(itemNames);
-		itemComboBox.setPromptText("Select Item to Redeem");
-		redemptionRoot.add(itemComboBox, 0, 1);
+		// LCBO Giftcard
+		ImageView imgLCBO = new ImageView(getClass().getResource("/images/lcboGiftcard.png").toString());
+		imgLCBO.setFitWidth(PRODUCT_SIZE);
+		imgLCBO.setFitHeight(PRODUCT_SIZE);
+		StackPane lcboPane = new StackPane(imgLCBO);
+		redemptionRoot.add(lcboPane, 0, 1, 2, 1); // Span 2 columns for wordle
+		GridPane.setHalignment(lcboPane, HPos.CENTER);
+
+		// LCBO Giftcard Button
+		Button btnLCBO = new Button("Select");
+		btnLCBO.setFont(Font.font("Times New Roman", FONT));
+		btnLCBO.setTextFill(Color.WHITE);
+		btnLCBO.setStyle("-fx-background-color: black;");
+		btnLCBO.setOnAction(event -> selectedItem = AccountsManager.ShopItem.ITEM1.getItemName());
+		redemptionRoot.add(btnLCBO, 0, 2, 2, 1); // Span 2 columns for the button
+		GridPane.setHalignment(btnLCBO, HPos.CENTER);
+
+		// Newspaper
+		ImageView imgNewspaper = new ImageView(getClass().getResource("/images/newspaper.png").toString());
+		imgNewspaper.setFitWidth(PRODUCT_SIZE);
+		imgNewspaper.setFitHeight(PRODUCT_SIZE);
+		StackPane newspaperPane = new StackPane(imgNewspaper);
+		redemptionRoot.add(newspaperPane, 2, 1, 2, 1); // Span 2 columns for wordle
+		GridPane.setHalignment(newspaperPane, HPos.CENTER);
+
+		// Newspaper Button
+		Button btnNewspaper = new Button("Select");
+		btnNewspaper.setFont(Font.font("Times New Roman", FONT));
+		btnNewspaper.setTextFill(Color.WHITE);
+		btnNewspaper.setStyle("-fx-background-color: black;");
+		btnNewspaper.setOnAction(event -> selectedItem = AccountsManager.ShopItem.ITEM2.getItemName());
+		redemptionRoot.add(btnNewspaper, 2, 2, 2, 1); // Span 2 columns for the button
+		GridPane.setHalignment(btnNewspaper, HPos.CENTER);
+
+		// Costco Giftcard
+		ImageView imgCostco = new ImageView(getClass().getResource("/images/costcoGiftcard.png").toString());
+		imgCostco.setFitWidth(PRODUCT_SIZE);
+		imgCostco.setFitHeight(PRODUCT_SIZE);
+		StackPane inventoryCostco = new StackPane(imgCostco);
+		redemptionRoot.add(inventoryCostco, 4, 1, 2, 1); // Span 2 columns for wordle
+		GridPane.setHalignment(inventoryCostco, HPos.CENTER);
+
+		// Costco Giftcard Button
+		Button btnCostco = new Button("Select");
+		btnCostco.setFont(Font.font("Times New Roman", FONT));
+		btnCostco.setTextFill(Color.WHITE);
+		btnCostco.setStyle("-fx-background-color: black;");
+		btnCostco.setOnAction(event -> selectedItem = AccountsManager.ShopItem.ITEM3.getItemName());
+		redemptionRoot.add(btnCostco, 4, 2, 2, 1); // Span 2 columns for the button
+		GridPane.setHalignment(btnCostco, HPos.CENTER);
+
+		// Coffee Giftcard
+		ImageView imgCoffee = new ImageView(getClass().getResource("/images/coffee.png").toString());
+		imgCoffee.setFitWidth(PRODUCT_SIZE);
+		imgCoffee.setFitHeight(PRODUCT_SIZE);
+		StackPane coffeePane = new StackPane(imgCoffee);
+		redemptionRoot.add(coffeePane, 7, 1, 2, 1); // Span 2 columns for wordle
+		GridPane.setHalignment(coffeePane, HPos.CENTER);
+
+		// Coffee Giftcard Button
+		Button btnCoffee = new Button("Select");
+		btnCoffee.setFont(Font.font("Times New Roman", FONT));
+		btnCoffee.setTextFill(Color.WHITE);
+		btnCoffee.setStyle("-fx-background-color: black;");
+		btnCoffee.setOnAction(event -> selectedItem = AccountsManager.ShopItem.ITEM4.getItemName());
+		redemptionRoot.add(btnCoffee, 7, 2, 2, 1); // Span 2 columns for the button
+		GridPane.setHalignment(btnCoffee, HPos.CENTER);
+
+		// Redeem Points Button
 		Button btnRedeemPoints = new Button("Redeem Points");
-		btnRedeemPoints.setFont(Font.font(SMALL_FONT));
-		redemptionRoot.add(btnRedeemPoints, 0, 2);
-		GridPane.setHalignment(btnRedeemPoints, HPos.CENTER);
+		btnRedeemPoints.setFont(Font.font("Times New Roman", FONT));
+		redemptionRoot.add(btnRedeemPoints, 0, 4, 8, 1); // Span 8 columns for the button
+		btnRedeemPoints.setTextFill(Color.WHITE);
+		btnRedeemPoints.setStyle("-fx-background-color: red;");
+		GridPane.setHalignment(btnRedeemPoints, HPos.LEFT);
 
+		// Return Home Button
 		Button btnReturnHome = new Button("Return Home");
-		btnReturnHome.setFont(Font.font(SMALL_FONT));
+		btnReturnHome.setFont(Font.font("Times New Roman", FONT));
+		btnReturnHome.setTextFill(Color.WHITE);
+		btnReturnHome.setStyle("-fx-background-color: black;");
 		btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
-		redemptionRoot.add(btnReturnHome, 0, 3); // Adjusted row index
+		redemptionRoot.add(btnReturnHome, 0, 5, 8, 1); // Span 8 columns for the button
+		GridPane.setHalignment(btnReturnHome, HPos.LEFT);
 
-		Scene redemptionScene = new Scene(redemptionRoot, SHOP_SCREEN_WIDTH, SHOP_SCREEN_HEIGHT);
-
-		 // Points Box
-	    VBox pointsBox = new VBox(GAP);
-	    pointsBox.setAlignment(Pos.CENTER);
-	    lblTrackPoints = new Label("Points: " + currentAccount.getPoints());
-	    lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
-	    pointsBox.getChildren().add(lblTrackPoints);
-	    redemptionRoot.add(pointsBox, 3, 4, 2, 1); // Span 2 columns for points
-	    GridPane.setHalignment(pointsBox, HPos.CENTER);
+		// Points Box
+		VBox pointsBox = new VBox(GAP);
+		pointsBox.setAlignment(Pos.BASELINE_LEFT);
+		lblTrackPoints = new Label("Points: " + currentAccount.getPoints());
+		lblTrackPoints.setFont(Font.font("Times New Roman", FONT));
+		pointsBox.getChildren().add(lblTrackPoints);
+		redemptionRoot.add(pointsBox, 0, 6, 8, 1); // Span 8 columns for points
+		GridPane.setHalignment(pointsBox, HPos.LEFT);
 		
     	// Assuming you have a method in your PointsRewardShop class to get the purchased items
  		ArrayList<AccountsManager.ShopItem> purchasedItems = manager.getAccountByIndex(currentAccount.getAccountIndex()).getPurchasedItems();
@@ -317,25 +456,9 @@ public class NYTimesFX extends Application {
  		lblInventoryTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, FONT));
  		inventoryBox.getChildren().add(lblInventoryTitle);
 
- 		ObservableList<String> inventoryItems = FXCollections.observableArrayList();
 
- 		for (AccountsManager.ShopItem item : purchasedItems) {
- 		    inventoryItems.add(item.getItemName()); 
- 		}
-
- 		// Create a ListView to display the inventory items
- 		ListView<String> inventoryListView = new ListView<>(inventoryItems);
- 		inventoryListView.setPrefHeight(INVENTORY_HEIGHT); // Adjust the height as needed
- 		inventoryListView.setStyle("-fx-font-size: " + FONT + "pt"); // Set font size
-
-
- 		redemptionRoot.add(inventoryBox, 3, 1, 2, 1); // Adjusted column and row indices
- 		GridPane.setHalignment(inventoryBox, HPos.CENTER);
-	    
-		// Assuming you have a method to handle points redemption in your RewardShop
-		// class///
 	    btnRedeemPoints.setOnAction(event -> {
-	        String selectedShopItemName = itemComboBox.getValue();
+	        String selectedShopItemName = selectedItem;
 	        if (selectedShopItemName != null) {
 	        	AccountsManager.ShopItem selectedShopItem = manager.getShopItemByName(selectedShopItemName);
 	            if (selectedShopItem != null) {
@@ -347,7 +470,7 @@ public class NYTimesFX extends Application {
 	                    
 	                } else {
 	                    // Handle insufficient points (e.g., display an error message)
-	                    showAlert(AlertType.ERROR, "Error", "There was a system error, you do not have enough points for this item.");
+	                    showAlert(AlertType.ERROR, "Error", "There was a system error, you do not have enough points for a" + selectedItem + ".");
 	                    lblTrackPoints.setText("Points: " + currentAccount.getPoints());
 	                }
 	            }
@@ -407,8 +530,8 @@ public class NYTimesFX extends Application {
 		newAccountRoot.add(btnCreateNewAccount, 0, 3, 2, 1);
 		GridPane.setHalignment(btnCreateNewAccount, HPos.CENTER);
 
-		homepageBackground = new Background(homepageBackgroundImage);
-		newAccountRoot.setBackground(homepageBackground);
+		loginPageBackground = new Background(loginPageBackgroundImage);
+		newAccountRoot.setBackground(loginPageBackground);
 
 		return new Scene(newAccountRoot, LOGIN_SCREEN_WIDTH + 300, LOGIN_SCREEN_HEIGHT);
 	}

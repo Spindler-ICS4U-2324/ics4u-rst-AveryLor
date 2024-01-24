@@ -13,7 +13,7 @@ public class AccountsManager {
 
 	public enum ShopItem {
 
-		ITEM1("LCBO Giftcard", 400), ITEM2("Newspaper", 200), ITEM3("Costco Giftcard", 300), ITEM4("Coffee", 100);
+		ITEM1("LCBO Giftcard", 2000), ITEM2("Newspaper", 200), ITEM3("Costco Giftcard", 1000), ITEM4("Coffee", 100);
 
 		private String itemName;
 		private int points;

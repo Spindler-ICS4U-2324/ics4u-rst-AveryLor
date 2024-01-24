@@ -40,8 +40,8 @@ public class NYTimesFX extends Application {
 	private static final int LARGE_FONT = 40;
 	private static final int FONT = 20;
 	private static final int SMALL_FONT = 15;
-	private static final int LOGIN_SCREEN_WIDTH = 400;
-	private static final int LOGIN_SCREEN_HEIGHT = 500;
+	private static final int LOGIN_SCREEN_WIDTH = 1000;
+	private static final int LOGIN_SCREEN_HEIGHT = 700;
 	private static final int HOME_SCREEN_WIDTH = 1000;
 	private static final int HOME_SCREEN_HEIGHT = 700;
 	private static final int WORDLE_SCREEN_WIDTH = 1000;
@@ -554,7 +554,7 @@ public class NYTimesFX extends Application {
 		loginPageBackground = new Background(loginPageBackgroundImage);
 		newAccountRoot.setBackground(loginPageBackground);
 
-		return new Scene(newAccountRoot, LOGIN_SCREEN_WIDTH + 300, LOGIN_SCREEN_HEIGHT);
+		return new Scene(newAccountRoot, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
 	}
 
 	private Scene getWordleScene() {

@@ -1,5 +1,12 @@
 package assignment;
 
+/**
+ * @author s453512 
+ * Date: 2024-01-08 
+ * StringFinder.java 
+ * Client code for the NYTimesFX class which displays the JavaFX scene
+ */
+
 import javafx.application.Application;
 import javafx.scene.paint.Color;
 import javafx.geometry.HPos;
@@ -33,7 +40,8 @@ import java.util.ArrayList;
 import javafx.scene.layout.VBox;
 
 public class NYTimesFX extends Application {
-	// Contsants for sizing 
+	
+	// Constants for sizing 
 	private static final int GAP = 15;
 	private static final int LENGTH = 5;
 	private static final int HEIGHT = 6;
@@ -56,7 +64,7 @@ public class NYTimesFX extends Application {
 	private AccountsManager manager = new AccountsManager();
 	private WordleFX wordleGame;
 	private Square[][] box;
-	private Stage myStage;
+	private Stage myStage; // Used for opening new scenes 
 	private Account currentAccount;
 	private String selectedItem; 
 
@@ -82,7 +90,7 @@ public class NYTimesFX extends Application {
 	@Override
 	public void start(Stage myStage) throws Exception { // Main
 		// Setting up 
-		this.myStage = myStage; // Used for multiple stages 
+		this.myStage = myStage; // Used for setting multiple scenes 
 		manager.loadAllAccounts(FILE); // Loading up all the accounts 
 
 		// Setting up the GridPane 
@@ -198,7 +206,7 @@ public class NYTimesFX extends Application {
 		String newUsername, newPassword;
 		int accountIndex;
 		
-		// Processing 
+		// Processing and file handling 
 		try {
 			newUsername = txtNewUsername.getText(); // Getting text 
 			newPassword = txtNewPassword.getText();
@@ -217,7 +225,8 @@ public class NYTimesFX extends Application {
 
 	// Home screen scene 
 	private Scene getHomeScene() {
-	    GridPane homeRoot = new GridPane();
+	    // Setting up the GridPane 
+		GridPane homeRoot = new GridPane();
 	    homeRoot.setHgap(GAP);
 	    homeRoot.setVgap(GAP);
 	    homeRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
@@ -300,6 +309,7 @@ public class NYTimesFX extends Application {
 		Background homePageBackground = new Background(homePageBackgroundImage);
 		homeRoot.setBackground(homePageBackground);
 
+		// Returning the scene so that it set 
 	    return new Scene(homeRoot, HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT);
 	}
 
@@ -468,32 +478,33 @@ public class NYTimesFX extends Application {
 		redemptionRoot.add(pointsBox, 0, 6, 8, 1); // Span 8 columns for points
 		GridPane.setHalignment(pointsBox, HPos.LEFT);
 		
-    	// Processing 
-	    btnRedeemPoints.setOnAction(event -> {
-	        String selectedShopItemName = selectedItem;
-	        if (selectedShopItemName != null) { // Actual shop item 
-	        	AccountsManager.ShopItem selectedShopItem = manager.getShopItemByName(selectedShopItemName); // Assign variable 
-	            if (selectedShopItem != null) {
-	                boolean success = manager.redeemItem(selectedShopItem, currentAccount.getAccountIndex());
-	                if (success) { // Handle successful redemption (e.g., display a message)
-	                	currentAccount.setUserHasItems(true); // Set to true for file output 
-	                	currentAccount.purchaseItem(selectedShopItem); // Purchase the item only after 
-	                    showAlert(AlertType.INFORMATION, "Success", "Thank you for redeeming your points!");
-	                    lblTrackPoints.setText("Points: " + currentAccount.getPoints());
-	                    return; 
-	                    
-	                } else { // Handling insufficient points 
-	                    showAlert(AlertType.ERROR, "Error", "There was a system error, you do not have enough points for a" + selectedItem + ".");
-	                    lblTrackPoints.setText("Points: " + currentAccount.getPoints());
-	                    return; 
-	                }
-	            }
-	        } else { // Handling no item selected 
-	            showAlert(AlertType.ERROR, "Error", "There was no item selected.");
-	            lblTrackPoints.setText("Points: " + currentAccount.getPoints());
-                return; 
-	        }
-	    });
+		btnRedeemPoints.setOnAction(event -> { // Set the action for redeeming points when the button is clicked
+		    String selectedShopItemName = selectedItem; // Get the name of the selected item
+		    
+		    // Check if a valid item name is selected
+		    if (selectedShopItemName != null) {
+		        AccountsManager.ShopItem selectedShopItem = manager.getShopItemByName(selectedShopItemName); // Retrieve the ShopItem object by its name
+		        
+		        // Check if a valid ShopItem is retrieved
+		        if (selectedShopItem != null) {
+		            boolean success = manager.redeemItem(selectedShopItem, currentAccount.getAccountIndex()); // Attempt to redeem the selected item
+		            
+		            // Handle successful redemption
+		            if (success) {
+		                currentAccount.setUserHasItems(true); // Set to true for file output
+		                currentAccount.purchaseItem(selectedShopItem); // Mark the item as purchased
+		                showAlert(AlertType.INFORMATION, "Success", "Thank you for redeeming your points!"); // Display a success message
+		                lblTrackPoints.setText("Points: " + currentAccount.getPoints()); // Update the displayed points
+		            } else {
+		                // Handle insufficient points (e.g., display an error message)
+		                showAlert(AlertType.ERROR, "Error", "There was a system error, you do not have enough points for a " + selectedItem + ".");
+		            }
+		        }
+		    } else {
+		        // Handle no item selected (e.g., display an error message)
+		        showAlert(AlertType.ERROR, "Error", "There was no item selected.");
+		    }
+		});
 	    
 	    // Setting the background 
 	    Image imgShopPageBackground = new Image("/images/wordleBG.png");
@@ -501,76 +512,88 @@ public class NYTimesFX extends Application {
 		Background shopPageBackground = new Background(shopPageBackgroundImage);
 		redemptionRoot.setBackground(shopPageBackground);
 	    
+		// Return the scene 
 		return redemptionScene;
 	}
 
+	// Create account scene 
 	private Scene getCreateAccountScene() {
+		// Setting up the GridPane 
 		GridPane newAccountRoot = new GridPane();
 		newAccountRoot.setHgap(GAP);
 		newAccountRoot.setVgap(GAP);
 		newAccountRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		newAccountRoot.setAlignment(Pos.CENTER);
 
+		// NYTimes Symbol 
 		imgSymbol.setFitWidth(100); 
 		imgSymbol.setFitHeight(100); 
 		newAccountRoot.add(imgSymbol, 0, 0); 
 
+		// Adding a Title 
 		Label lblTitle = new Label();
 		lblTitle.setFont(Font.font("Times New Roman", FontWeight.BOLD, LARGE_FONT)); 
-																						
 		lblTitle.setText("Create A New Account");
 		newAccountRoot.add(lblTitle, 1, 0, 1, 1);
 		GridPane.setHalignment(lblTitle, HPos.LEFT);
 
+		// New username entry field  
 		txtNewUsername = new TextField();
 		txtNewUsername.setFont(Font.font("Times New Roman", FONT));
 		newAccountRoot.add(txtNewUsername, 1, 1);
 
+		// New password entry field 
 		txtNewPassword = new TextField();
 		txtNewPassword.setFont(Font.font("Times New Roman", FONT));
 		newAccountRoot.add(txtNewPassword, 1, 2);
 
+		// New username descriptive label 
 		Label lblNewUsername = new Label();
 		lblNewUsername.setFont(Font.font("Times New Roman", FONT));
 		lblNewUsername.setText("Enter Username:");
 		newAccountRoot.add(lblNewUsername, 0, 1, 1, 1);
 		GridPane.setHalignment(lblNewUsername, HPos.LEFT);
 
+		// New password descriptive label 
 		Label lblNewPassword = new Label();
 		lblNewPassword.setFont(Font.font("Times New Roman", FONT));
 		lblNewPassword.setText("Enter Password:");
 		newAccountRoot.add(lblNewPassword, 0, 2, 1, 1);
 		GridPane.setHalignment(lblNewPassword, HPos.LEFT);
 
+		// Create new account 
 		Button btnCreateNewAccount = new Button();
 		btnCreateNewAccount.setFont(Font.font("Times New Roman", FONT));
 		btnCreateNewAccount.setText("Create New Account");
 		btnCreateNewAccount.setTextFill(Color.WHITE);
 		btnCreateNewAccount.setStyle("-fx-background-color: black;");
-		btnCreateNewAccount.setOnAction(event -> createNewAccount());
+		btnCreateNewAccount.setOnAction(event -> createNewAccount()); // Event handler which will create the new account 
 		newAccountRoot.add(btnCreateNewAccount, 0, 3, 2, 1);
 		GridPane.setHalignment(btnCreateNewAccount, HPos.CENTER);
 
+		// Set the Background 
 		loginPageBackground = new Background(loginPageBackgroundImage);
 		newAccountRoot.setBackground(loginPageBackground);
 
+		// Return the scene 
 		return new Scene(newAccountRoot, LOGIN_SCREEN_WIDTH, LOGIN_SCREEN_HEIGHT);
 	}
 
+	// The Wordle Scene 
 	private Scene getWordleScene() {
-		// Instantiating the WordleFX scene
+		// Instantiating the WordleFX scene and resetting important variables 
 		wordleGame = new WordleFX();
-		numFullGuesses = 0;
+		numFullGuesses = 0; // No guesses made yet 
+		gameEnded = false; // The game has not ended yet 
 
-		// Setting variables
-		gameEnded = false;
-
+		// Setting up the Gridpane 
 		GridPane wordleRoot = new GridPane();
 		wordleRoot.setHgap(GAP);
 		wordleRoot.setVgap(GAP);
 		wordleRoot.setPadding(new Insets(GAP, GAP, GAP, GAP));
 		wordleRoot.setAlignment(Pos.CENTER);
 
+		// Add the symbol image 
 		imgSymbol.setFitWidth(100); // Set the desired width
 		imgSymbol.setFitHeight(100); // Set the desired height
 		wordleRoot.add(imgSymbol, 0, 0, 2, 1); // Assuming you want it in the top-right corner (adjust column index as needed)
@@ -581,25 +604,27 @@ public class NYTimesFX extends Application {
 		wordleRoot.add(lblTitle, 1, 0, 3, 1); // Span 3 columns for the label
 		GridPane.setHalignment(lblTitle, HPos.CENTER);
 
-		box = new Square[HEIGHT][LENGTH];
-		for (int col = 0; col <= LENGTH - 1; col++) {
-			for (int row = 0; row <= HEIGHT - 1; row++) {
+		// Setting the board up 
+		box = new Square[HEIGHT][LENGTH]; // Initialize the size 
+		for (int col = 0; col <= LENGTH - 1; col++) { // Go through all the columns 
+			for (int row = 0; row <= HEIGHT - 1; row++) { // Go through all the rows
 				box[row][col] = new Square();
 				box[row][col].setLetter(Square.BLANK); // Initialize letter as a blank space
 				wordleRoot.add(box[row][col], col, row + 1);
 			}
 		}
 
+		// Adding the return home button 
 		Button btnReturnHome = new Button();
 		btnReturnHome.setFont(Font.font("Times New Roman", SMALL_FONT));
 		btnReturnHome.setText("Return Home");
 		btnReturnHome.setTextFill(Color.WHITE);
 		btnReturnHome.setStyle("-fx-background-color: black;");
-		btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene()));
+		btnReturnHome.setOnAction(event -> myStage.setScene(getHomeScene())); // If clicked, send them to the home scene 
 		wordleRoot.add(btnReturnHome, 1, 8, 3, 1); // Added 1 to the row index
 		GridPane.setHalignment(btnReturnHome, HPos.CENTER);
 
-		 // Points Box
+		// Points Box
 	    VBox pointsBox = new VBox(GAP);
 	    pointsBox.setAlignment(Pos.CENTER);
 	    lblTrackPoints = new Label("Points: " + currentAccount.getPoints());
@@ -608,99 +633,101 @@ public class NYTimesFX extends Application {
 	    wordleRoot.add(pointsBox, 3, 8, 2, 1); // Span 2 columns for points
 	    GridPane.setHalignment(pointsBox, HPos.CENTER);
 	    
+	    // Setting up the background 
 	    Image imgWordlePageBackground = new Image("/images/wordleBG.png");
 		BackgroundImage wordlePageBackgroundImage = new BackgroundImage(imgWordlePageBackground, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
 		Background wordlePageBackground = new Background(wordlePageBackgroundImage);
 		wordleRoot.setBackground(wordlePageBackground);
 
+		// Declaring the scene as a variable so I can use .setOnKeyPressed(event)
 		Scene wordleScene = new Scene(wordleRoot, WORDLE_SCREEN_WIDTH, WORDLE_SCREEN_HEIGHT);
 		wordleScene.setOnKeyPressed(event -> handleKeyStroke(event));
 
 		return wordleScene;
 	}
 
+	// If a key is pressed 
 	private void handleKeyStroke(KeyEvent event) {
 		// Variables
-		boolean win; 
-		boolean letterPlaced = false;
-		char character = event.getCode().toString().charAt(0);
+		boolean win; // The user has won 
+		boolean letterPlaced = false; // The letter has not yet been placed in the board 
+		char character = event.getCode().toString().charAt(0); // The user's character 
 
 		// Game ended
 		if (gameEnded) {
 			return;
 		}
 
+		// If the user enters backspace 
 		if (event.getCode() == KeyCode.BACK_SPACE) {
 			handleBackspace(); // Handle backspace key press
 			return;
 		}
 		
 		// Check if the entered character forms a valid word
-		for (int row = 0; row < HEIGHT; row++) {
-			for (int col = 0; col < LENGTH; col++) {
-				if (box[row][col].getLetter() == Square.BLANK) {
-					box[row][col].setLetter(character);
-					letterPlaced = true;
+		for (int row = 0; row < HEIGHT; row++) { // Go through all the rows 
+			for (int col = 0; col < LENGTH; col++) { // Go through all the columns 
+				if (box[row][col].getLetter() == Square.BLANK) { // If the square is blank 
+					box[row][col].setLetter(character); // Set the character to the current character 
+					letterPlaced = true; // Now the letter is placed
 					break; // exit the inner loop after placing the character
 				}
 			}
 
-			if (letterPlaced) {
-				break; // exit the outer loop after placing the character
+			if (letterPlaced) { // If the letter has been placed, we can now break out of this loop 
+				break; // exit the outer loop after placing the character, don't enter it anywhere else 
 			}
 		}
 
-		if (letterPlaced) {		
-			if (WordleFX.isRowFull(numFullGuesses, box)) {
-				String currentGuess = WordleFX.getCurrentWord(box, numFullGuesses);
-			    if (WordleFX.isWordValid(currentGuess) == false) { // Display an error message or take appropriate action
-			    	handleInvalidWord(numFullGuesses); 
-			        showAlert(AlertType.ERROR, "Invalid Word", "The entered word, " + currentGuess + " is not a valid word!");
-			        return;
-			    }
-			
-				numFullGuesses++;
-				if (wordleGame.wordClean(box, numFullGuesses - 1)) {
-					showAlert(AlertType.INFORMATION, "You Win! You get 100 points!", "The word was: " + wordleGame.getKeyword());
-					win = true; 
-					gameEnded = true;
-					manager.incLoyaltyPoints(win, currentAccount.getAccountIndex());
-					lblTrackPoints.setText("Points: " + currentAccount.getPoints());
-				} else if (WordleFX.isBoardFull(box)) {
-					showAlert(AlertType.INFORMATION, "Good try! You get 50 points!", "The word was: " + wordleGame.getKeyword());
-					win = false; 
-					gameEnded = true;
-					manager.incLoyaltyPoints(win, currentAccount.getAccountIndex());
-					lblTrackPoints.setText("Points: " + currentAccount.getPoints());
-				}
+		// Processing 
+		if (WordleFX.isRowFull(numFullGuesses, box)) { // Check if the row is now full
+			String currentGuess = WordleFX.interpretUserGuess(numFullGuesses, box); // Interpet the user's guess, get the String from it 
+			if (WordleFX.isWordValid(currentGuess) == false) { // Display an error message or take appropriate action
+				handleInvalidWord(numFullGuesses); // If the word is invalid, remove the guess and force the re-prompt 
+				showAlert(AlertType.ERROR, "Invalid Word", "The entered word, " + currentGuess + " is not a valid word!");
+				return;
 			}
 
+			// Otherwise, continue on and increment the number of guesses 
+			numFullGuesses++;
+			if (wordleGame.wordClean(box, numFullGuesses - 1)) { // Clean the word, if it cleans true, the user has suceeded 
+				showAlert(AlertType.INFORMATION, "You Win! You get 100 points!", "The word was: " + wordleGame.getKeyword());
+				win = true; // User has won 
+				gameEnded = true; // Game has ended 
+				manager.incLoyaltyPoints(win, currentAccount.getAccountIndex()); // Increment the loyalty points based on the result 
+				lblTrackPoints.setText("Points: " + currentAccount.getPoints()); // Set the points 
+			} else if (WordleFX.isBoardFull(box)) { // If the board is full, the user has lost 
+				showAlert(AlertType.INFORMATION, "Good try! You get 50 points!", "The word was: " + wordleGame.getKeyword()); // You get 50 points, 
+				win = false;
+				gameEnded = true;
+				manager.incLoyaltyPoints(win, currentAccount.getAccountIndex()); // Upddate the points 
+				lblTrackPoints.setText("Points: " + currentAccount.getPoints()); // Update the points label  
+			}
 		}
-	
 	}
 
-	
+	// Handling backspace enters 
 	private void handleBackspace() {
-	    // Handle backspace key press, e.g., clear the last filled letter
-	    for (int col = LENGTH - 1; col >= 0; col--) {
+	    for (int col = LENGTH - 1; col >= 0; col--) { // Done this way to remove from the last char entered 
 	        for (int row = HEIGHT - 1; row >= 0; row--) {
-	            if (box[row][col].getLetter() != Square.BLANK) {
-	                if (numFullGuesses == 0 || !WordleFX.isRowFull(row, box)) {
-	                    box[row][col].setLetter(Square.BLANK);
-	                    return;
+	            if (box[row][col].getLetter() != Square.BLANK) { // If not blank 
+	                if (numFullGuesses == 0 || !WordleFX.isRowFull(row, box)) { // If in 0 remove, but check otherwise if the row is full yet 
+	                    box[row][col].setLetter(Square.BLANK); // Set the letter to blank if the conditions are met 
+	                    return; 
 	                }
 	            }
 	        }
 	    }
 	}
 	
+	// Handling an invalid word 
 	private void handleInvalidWord(int numFullGuesses) {
-	    // Handle backspace key press, e.g., clear the last filled letter
-	    for (int col = 0; col < LENGTH; col++) {
+	    for (int col = 0; col < LENGTH; col++) { // Completely remove that row (set it all to blank)
 	    	box[numFullGuesses][col].setLetter(Square.BLANK);
 	    }
 	}
 
+	// Used for quickly showing information 
 	private void showAlert(AlertType alertType, String title, String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);
@@ -708,9 +735,8 @@ public class NYTimesFX extends Application {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-	
-	
 
+	// Main
 	public static void main(String[] args) {
 		launch(args);
 	}

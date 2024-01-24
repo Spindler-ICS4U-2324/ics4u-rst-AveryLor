@@ -14,23 +14,45 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 public class AccountsManager {
 
-	private ArrayList<Account> accountList;
+	// Constants
 	private static final int WIN_REWARD = 100; 
 	private static final int LOOSE_REWARD = 50; 
+	private static final int BASE_POINTS = 0; 
+	private static final int LBCO_COST = 2000; 
+	private static final int NEWSPAPER_COST = 200; 
+	private static final int COFFEE_COST = 100; 
+	private static final int COSTCO_COST = 1000; 
+	private static final String LCBO_GIFTCARD = "LCBO Giftcard";
+	private static final String NEWSPAPER = "Newspaper";
+	private static final String COSTCO_GIFTCARD = "Costco Giftcard";
+	private static final String COFFEE = "Coffee";
+	
+	// Field 
+	private ArrayList<Account> accountList;
 
 	/**
      * Enumeration representing shop items with their names and corresponding points.
      */
 	public enum ShopItem {
 
-		ITEM1("LCBO Giftcard", 2000), ITEM2("Newspaper", 200), ITEM3("Costco Giftcard", 1000), ITEM4("Coffee", 100);
+		// Items within the item shop
+		ITEM1(LCBO_GIFTCARD, LBCO_COST), ITEM2(NEWSPAPER, NEWSPAPER_COST), ITEM3(COSTCO_GIFTCARD, COSTCO_COST), ITEM4(COFFEE, COFFEE_COST);
 
-		private String itemName;
-		private int points;
-
+		// ShopItem type fields 
+		private String itemName; // They have a name 
+		private int points; // And a cost number of points 
+		
+		/**
+		 * Constructs a new ShopItem with the specified item name and points.
+		 *
+		 * @param itemName 
+		 * 		The name of the shop item.
+		 * 
+		 * @param points   
+		 * 		The number of points required to redeem this item.
+		 */
 		ShopItem(String itemName, int points) {
 			this.itemName = itemName;
 			this.points = points;
@@ -78,7 +100,6 @@ public class AccountsManager {
 			String line, username, password;
 			boolean userHasItems;
 
-			
 			// Instantiating
 			FileReader accountFile = new FileReader(file);
 			BufferedReader accountReader = new BufferedReader(accountFile);
@@ -89,33 +110,35 @@ public class AccountsManager {
 				password = accountReader.readLine();
 				points = Integer.parseInt(accountReader.readLine()); 
 				userHasItems = Boolean.parseBoolean(accountReader.readLine());
-				
-				Account currentAccount = new Account(username, password);
-				currentAccount.setPoints(points);
-				currentAccount.setUserHasItems(userHasItems);
-				currentAccount.setAccountIndex(accountList.size());
+
+				// Create an instance of a class with the overloaded constructor (easier to set 
+				Account currentAccount = new Account(username, password); // username and password 
+				currentAccount.setPoints(points); // Set points 
+				currentAccount.setUserHasItems(userHasItems); // Set if they have any shop items  
+				currentAccount.setAccountIndex(accountList.size()); // And the index 
 				accountList.add(currentAccount);
 				
+				// If they do have shop items, add them to the list 
 				if (userHasItems) {
 					numItems = Integer.parseInt(accountReader.readLine());
 					ArrayList<AccountsManager.ShopItem> purchasedItems = new ArrayList<>();
 					
+					// Looping through the entire item list that the user has 
 					for (int i = 0; i < numItems; i++) {
 						String currentItem = accountReader.readLine();
 						AccountsManager.ShopItem shopItem = AccountsManager.ShopItem.valueOf(currentItem);
 						purchasedItems.add(shopItem);
-						currentAccount.setPurchasedItems(purchasedItems);
+						currentAccount.setPurchasedItems(purchasedItems); // Setting it to the current Account 
 					}
 				}
 			}
-			accountReader.close();
+			accountReader.close(); // Following this, close the file 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException a) {
 			a.printStackTrace();
 		} catch (NumberFormatException g) {
 			g.printStackTrace();
-			// I did this to make the application seem to flow more coherently and since
 		}
 	}
 
@@ -150,12 +173,12 @@ public class AccountsManager {
      * 		True if the credentials are valid, false otherwise.
      */
 	public boolean checkCredentials(String password, String username) {
-	    for (Account account : accountList) {
+	    for (Account account : accountList) { // Basic linear-esque search to checkCredentials 
 	        if (account.getUsername().equals(username) && account.getPassword().equals(password)) {
-	            return true;
+	            return true; // If both the password and username check out 
 	        }
 	    }
-	    return false;
+	    return false; // Otherwise, return false 
 	}
 	
 	/**
@@ -171,20 +194,23 @@ public class AccountsManager {
      * 		If the provided username is already taken.
      */
 	public void createNewAccount(String username, String password) {
-	    String[] allUserNames = new String[accountList.size()];
+	   // Converting the accountList ArrayList into a useable array
+		String[] allUserNames = new String[accountList.size()];
 	    for (int i = 0; i < accountList.size(); i++) {
 	        allUserNames[i] = accountList.get(i).getUsername();
 	    }
-	    // Sort the array of usernames
+	    
+	    // Sort the array of usernames before beginning the binary search 
 	    Arrays.sort(allUserNames);
-	    if (findUserName(allUserNames, username, 0, allUserNames.length - 1)) {
+	    if (StringFinder.findString(allUserNames, username, 0, allUserNames.length - 1)) { // The username is already taken 
 	    	throw new IllegalArgumentException("This user name is already taken!");
 	    } else {
+	    	// Creating the Account if the username is not already taken 
 	    	Account newAccount = new Account(username, password);
-	    	accountList.add(newAccount); 
-	    	newAccount.setAccountIndex(accountList.size() - 1);
-	    	newAccount.setUserHasItems(false);
-	    	newAccount.setPoints(0);
+	    	accountList.add(newAccount); // Adding it to the list 
+	    	newAccount.setAccountIndex(accountList.size() - 1); // Setting its index, 1 less since index starts from 0 
+	    	newAccount.setUserHasItems(false); // Setting 
+	    	newAccount.setPoints(BASE_POINTS); // Points start at zero 
 	    }
 		
 	}
@@ -192,8 +218,11 @@ public class AccountsManager {
 	/**
      * Finds the account index based on the provided username.
      *
-     * @param username The username to search for.
-     * @return The account index if the username is found, or -1 if not found.
+     * @param 
+     * 		username The username to search for.
+     * 
+     * @return 
+     * 		The account index if the username is found, or -1 if not found.
      */
     public int findAccountIndexByUsername(String username) {
         for (int i = 0; i < accountList.size(); i++) {
@@ -203,34 +232,6 @@ public class AccountsManager {
         }
         return -1; // Return -1 if the username is not found
     }
-    
-    /**
-     * Finds the account index based on the provided username.
-     *
-     * @param username 
-     * 		The username to search for.
-     * 
-     * @return 
-     * 		The account index if the username is found, or -1 if not found.
-     */
-	public boolean findUserName(String[] allUserNames, String searchName, int left, int right) {
-		if (left > right) {
-			return false; // element not found
-		}
-
-		int middle = (left + right) / 2;
-
-		if (allUserNames[middle].equals(searchName)) { // element was found!
-			return true;
-		}
-
-		if (allUserNames[middle].compareTo(searchName) > 0) {
-			return findUserName(allUserNames, searchName, left, middle - 1); // check the left side
-		} else {
-			return findUserName(allUserNames, searchName, middle + 1, right); // check the right side
-		}
-	}
-	
     
     /**
      * Gets the Account instance for the given account index.
@@ -244,8 +245,7 @@ public class AccountsManager {
     public Account getAccountByIndex(int accountIndex) {
         try {
             return accountList.get(accountIndex); // Return the Account instance if the index is valid
-        } catch (IndexOutOfBoundsException e) {
-            // Print the full stack trace of the exception
+        } catch (IndexOutOfBoundsException e) { // Print the full stack trace of the exception
             e.printStackTrace();
             return null;
         }
@@ -260,15 +260,13 @@ public class AccountsManager {
      * 		The ShopItem with the specified name, or null if not found.
      */
     public ShopItem getShopItemByName(String itemName) {
-        for (ShopItem shopItem : ShopItem.values()) {
+        for (ShopItem shopItem : ShopItem.values()) { // Linear like search to get the shopItem name 
             if (shopItem.getItemName().equals(itemName)) {
                 return shopItem;
             }
         }
         return null; // Item not found
     }
-    
-    
 
     /**
      * Redeems a shop item for the specified account if the account has enough points.
@@ -283,10 +281,12 @@ public class AccountsManager {
      * 		True if the redemption is successful, false if the account has insufficient points.
      */
     public boolean redeemItem(ShopItem item, int accountIndex) {
-        Account currentAccount = accountList.get(accountIndex);
+        // Variable Assignment
+    	Account currentAccount = accountList.get(accountIndex);
         int requiredPoints = item.getPoints();
 
-        if (currentAccount.getPoints() >= requiredPoints) {
+        // Processing 
+        if (currentAccount.getPoints() >= requiredPoints) { // Checking if they have enough points 
             currentAccount.setPoints(currentAccount.getPoints() - requiredPoints);
             return true; // Successful redemption
         } else {
@@ -305,9 +305,9 @@ public class AccountsManager {
      */
     public void incLoyaltyPoints(boolean win, int accountIndex) {
         Account currentAccount = accountList.get(accountIndex);
-        if (win) {
+        if (win) { // If they win they get 100 points 
             currentAccount.setPoints(currentAccount.getPoints() + WIN_REWARD);
-        } else {
+        } else { // If they loose they get 50 points
             currentAccount.setPoints(currentAccount.getPoints() + LOOSE_REWARD);
         }
     }

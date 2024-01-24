@@ -17,8 +17,11 @@ import java.util.Arrays;
 
 public class WordleFX {
 	
+	// Constants 
 	private static final int LENGTH = 5; // Length of the board 
 	private static final int HEIGHT = 6; // Height of the board 
+	
+	// Field 
 	private String keyword; // What the user is trying to guess 
 
 	/**
@@ -83,16 +86,17 @@ public class WordleFX {
 
 		// Processing
 		wordleGuess = interpretUserGuess(numGuesses, userBoard);
-		if (checkWord(wordleGuess, userBoard, numGuesses)) {
+		if (checkWord(wordleGuess, userBoard, numGuesses)) { // If the word is already right, return true 
 			return true;
 		} else {
 			// Get all the unique characters of the guess
 			keyword = getKeyword();
-			
 			ArrayList<Character> uniqueChar = uniqueCharacters(keyword);
+			
+			// Processing 
 			for (int col = 0; col < wordleGuess.length(); col++) {
-				if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) {
-					if (uniqueChar.contains(Character.toUpperCase(wordleGuess.charAt(col)))) {
+				if (userBoard[numGuesses][col].getValue() != Square.GREEN_VALUE) { // If the value is not green check it 
+					if (uniqueChar.contains(Character.toUpperCase(wordleGuess.charAt(col)))) { // In the uniqueChar list of the keyword
 						userBoard[numGuesses][col].setYellow(); 
 					} else {
 						userBoard[numGuesses][col].setGray();
@@ -102,7 +106,7 @@ public class WordleFX {
 			}
 		}
 		return false;
-	}
+	} // By first eliminating the green letters the algorithm can then easily check for the yellow letters in the remaining characters 
 
 	/**
      * Checks if the user's guess matches the keyword.
@@ -120,23 +124,24 @@ public class WordleFX {
      * 		True if the word is correctly guessed, false otherwise.
      */
 	public boolean checkWord(String wordleGuess, Square[][] userBoard, int numGuesses) {
-		// Processing=
+		// Processing
 	    String keyword;
 	    int counter = 0;
-
 		keyword = getKeyword();
 		
+		// Processing 
 		for (int col = 0; col < LENGTH; col++) {
-			if (Character.toUpperCase(wordleGuess.charAt(col)) == Character.toUpperCase(keyword.charAt(col))) {
-				userBoard[numGuesses][col].setGreen();
-				counter += 1; 
+			if (Character.toUpperCase(wordleGuess.charAt(col)) == Character.toUpperCase(keyword.charAt(col))) { // At the right position and character
+				userBoard[numGuesses][col].setGreen(); // Sets to green 
+				counter += 1; // Count to 5 for true 
 			}
 		}
+		
 		// Processing
-		if (counter == 5) {
-			return true;
+		if (counter == 5) { // If true 
+			return true; // Return true 
 		} else {
-			return false;
+			return false; // Otherwise return false 
 		}
 	}
 	
@@ -147,22 +152,22 @@ public class WordleFX {
      * 		A randomly selected keyword.
      */
 	public static String generateKeyword() {
+		// Variable 
 		int randNum;
 		String keyword, line; 
-		
 		ArrayList<String> allWordleWords = new ArrayList<String>();
 		
-
-		// Processing
+		// Processing (file handling)
 		try {
 			FileReader wordFile = new FileReader("data/wordleWords");
 			BufferedReader fileReader = new BufferedReader(wordFile);
 
+			// Looking through all the file lines 
 			while ((line = fileReader.readLine()) != null) {
-				allWordleWords.add(line);
+				allWordleWords.add(line); // Getting all the Wordle words 
 			}
-			fileReader.close();
-
+			fileReader.close(); // Close the reader 
+ 
 			// Error Checking
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -171,10 +176,9 @@ public class WordleFX {
 		}
 		
 		// Processing
-		randNum = randomNumber(0, allWordleWords.size() - 1);
-		keyword = allWordleWords.get(randNum);
-		
-		return keyword; 
+		randNum = randomNumber(0, allWordleWords.size() - 1); // Picking a random word out of it 
+		keyword = allWordleWords.get(randNum); // Setting this to the keyword 
+		return keyword; // Return 
 	}
 	
 	/**
@@ -189,16 +193,16 @@ public class WordleFX {
 	public static boolean isWordValid(String userGuess) {
 		// Variable
 		String line;
-
-		// Processing
 		ArrayList<String> allWordleWords = new ArrayList<String>();
 
+		// Processing 
 		try {
 			FileReader wordFile = new FileReader("data/wordleWords");
 			BufferedReader fileReader = new BufferedReader(wordFile);
 
+			// Looking through all the file lines 
 			while ((line = fileReader.readLine()) != null) {
-				line = line.trim();
+				line = line.trim(); // Trim the line, make sure no spaces at the end 
 				allWordleWords.add(line);
 			}
 			fileReader.close();
@@ -210,71 +214,15 @@ public class WordleFX {
 			a.printStackTrace();
 		}
 		
+		// Creating an array to use in the findWord method 
 		String[] allWords = new String[allWordleWords.size()];
 	    for (int i = 0; i < allWordleWords.size(); i++) {
 	    	allWords[i] = allWordleWords.get(i).toUpperCase();
 	    }
-	    // Sort the array of usernames
-	    Arrays.sort(allWords);
 	    
-	    // Return 
-		return findWord(allWords, userGuess, 0, allWords.length - 1);
-	}
-	
-	/**
-	 * Retrieves the current word from the game board for a specific guess.
-	 *
-	 * @param box      
-	 * 		The game board.
-	 * 
-	 * @param numGuess 
-	 * 		The number of guesses.
-	 * 
-	 * @return 
-	 * 		The current word for the specified guess.
-	 */
-	public static String getCurrentWord(Square[][] box, int numGuess) {
-		StringBuilder wordBuilder = new StringBuilder();
-		for (int col = 0; col < LENGTH; col++) {
-			wordBuilder.append(box[numGuess][col].getLetter());
-		}
-		return wordBuilder.toString();
-	}
-	
-	/**
-	 * Finds a word in an array of words using a binary search algorithm.
-	 *
-	 * @param allWords 
-	 * 		The array of words.
-	 * 
-	 * @param word     
-	 * 		The word to search for.
-	 * 
-	 * @param left     
-	 * 		The left index of the search range.
-	 * 
-	 * @param right    
-	 * 		The right index of the search range.
-	 * 
-	 * @return 
-	 * 		True if the word is found, false otherwise.
-	 */
-	public static boolean findWord(String[] allWords, String word, int left, int right) {
-		if (left > right) {
-			return false; // element not found
-		}
-
-		int middle = (left + right) / 2;
-
-		if (allWords[middle].equals(word)) { // element was found!
-			return true;
-		}
-
-		if (allWords[middle].compareTo(word) > 0) {
-			return findWord(allWords, word, left, middle - 1); // check the left side
-		} else {
-			return findWord(allWords, word, middle + 1, right); // check the right side
-		}
+	    // Sort the array of usernames before the binary search 
+	    Arrays.sort(allWords);
+		return StringFinder.findString(allWords, userGuess, 0, allWords.length - 1); // Return the results of the binary search 
 	}
 	
 	/**
@@ -298,7 +246,7 @@ public class WordleFX {
 				uniqueChars.add(Character.toUpperCase(currentChar));
 			}
 		}
-		return uniqueChars; 
+		return uniqueChars; // Return the ArrayList 
 	}
 	
 	/**
@@ -306,8 +254,10 @@ public class WordleFX {
 	 *
 	 * @param numGuesses 
 	 * 		The number of guesses (row index).
+	 * 
 	 * @param userBoard  
 	 * 		The game board.
+	 * 
 	 * @return 
 	 * 		True if the row is full, false otherwise.
 	 */
@@ -326,19 +276,23 @@ public class WordleFX {
 	 *
 	 * @param userBoard 
 	 * 		The game board.
+	 * 
 	 * @return 
 	 * 		True if the board is full, false otherwise.
 	 */
 	public static boolean isBoardFull(Square[][] userBoard) {
+		// Variable 
 		int counter = 0; 
 		
+		// Processing 
 		for (int row = 0; row < HEIGHT; row++) {
 			if(isRowFull(row, userBoard)) {
 				counter += 1; 
 			}
 		}
-		
-		if (counter == 6) {
+	
+		// Checking 
+		if (counter == 6) { // All six rows are full 
 			return true; 
 		} else {
 			return false; 
@@ -350,18 +304,19 @@ public class WordleFX {
 	 *
 	 * @param numGuesses  
 	 * 		The number of guesses (row index).
+	 * 
 	 * @param wordleBoard 
 	 * 		The game board.
+	 * 
 	 * @return 
 	 * 		The interpreted word for the specified guess.
 	 */
 	public static String interpretUserGuess(int numGuesses, Square[][] wordleBoard) {
 		String wordleWord = ""; 
 		for (int col = 0; col < LENGTH; col++) {
-			wordleWord += wordleBoard[numGuesses][col].getLetter();
+			wordleWord += wordleBoard[numGuesses][col].getLetter(); // 
 		}
 		return wordleWord;
-
 	}
 	
 	/**

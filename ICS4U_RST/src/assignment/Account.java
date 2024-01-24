@@ -148,8 +148,6 @@ public class Account {
         return purchasedItems;
     }
 
-	
-	
 	/**
 	 * Purchase the specified item and add it to the shopItems ArrayList.
 	 *
@@ -170,7 +168,4 @@ public class Account {
     public void setPurchasedItems(ArrayList<AccountsManager.ShopItem> purchasedItemsList) {
         this.purchasedItems = purchasedItemsList;
     }
-    
-    
-
 }

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import java.io.FileNotFoundException;
 
-
 /**
  * @author s453512 
  * Date: 2024-01-08 
@@ -39,14 +38,13 @@ public class AccountInformation { // Utility class, the sole method is static (h
 		boolean userHasItems;
 		int points;
 
+		// File Handling 
 		try {
 			FileWriter fileWriter = new FileWriter(file); // Initialize FileWriter to write to the file
 			PrintWriter filePrinter = new PrintWriter(fileWriter); // Initialize FileReader to read from the file
 
-			for (Account temp : accountList) { // Goes through all the accounts within the data structure (ArrayList)
-				// Gets all the pertinent information as described in the variables above
-				// through gettors
-				username = temp.getUsername();
+			for (Account temp : accountList) { // Goes through all the accounts within the data structure and gets 
+				username = temp.getUsername(); // All pertinent information to be saved through getters
 				password = temp.getPassword();
 				points = temp.getPoints();
 				userHasItems = temp.getHasUserItems();
@@ -54,8 +52,8 @@ public class AccountInformation { // Utility class, the sole method is static (h
 				filePrinter.println(password);
 				filePrinter.println(points);
 				filePrinter.println(userHasItems);
-				// Prints all the information into the text file
-
+				
+				// If the user hasItems, then print them 
 				if (userHasItems) {
 					purchasedItems = temp.getPurchasedItems();
 					filePrinter.println(purchasedItems.size());

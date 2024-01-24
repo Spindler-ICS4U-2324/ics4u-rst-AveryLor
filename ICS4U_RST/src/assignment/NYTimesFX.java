@@ -639,7 +639,7 @@ public class NYTimesFX extends Application {
 				break; // exit the outer loop after placing the character
 			}
 		}
-
+//
 		if (letterPlaced) {		
 			if (WordleFX.isRowFull(numFullGuesses, box)) {
 				String currentGuess = WordleFX.getCurrentWord(box, numFullGuesses);
@@ -648,7 +648,7 @@ public class NYTimesFX extends Application {
 			        showAlert(AlertType.ERROR, "Invalid Word", "The entered word, " + currentGuess + " is not a valid word!");
 			        return;
 			    }
-				
+			
 				numFullGuesses++;
 				if (wordleGame.wordClean(box, numFullGuesses - 1)) {
 					showAlert(AlertType.INFORMATION, "You Win!", "The word was: " + wordleGame.getKeyword());

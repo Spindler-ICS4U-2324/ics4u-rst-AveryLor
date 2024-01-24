@@ -322,9 +322,14 @@ public class WordleFX {
 	/**
 	 * Generates a random integer between two specified values, inclusive.
 	 *
-	 * @param a The lower bound of the range.
-	 * @param b The upper bound of the range.
-	 * @return A random integer within the specified range.
+	 * @param a 
+	 * 		The lower bound of the range.
+	 * 
+	 * @param b 
+	 * 		The upper bound of the range.
+	 * 
+	 * @return A 
+	 * 		random integer within the specified range.
 	 */
 	public static int randomNumber(int a, int b) {
 		int highNum = Math.max(a, b);

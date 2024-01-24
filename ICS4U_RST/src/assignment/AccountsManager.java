@@ -1,4 +1,12 @@
 package assignment;
+
+/**
+ * @author s453512 
+ * Date: 2024-01-08 
+ * AccountInformation.java 
+ * Class that holds a list of Account's and manages their credentials, points and shop items 
+ */
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,7 +18,12 @@ import java.util.Arrays;
 public class AccountsManager {
 
 	private ArrayList<Account> accountList;
+	private static final int WIN_REWARD = 100; 
+	private static final int LOOSE_REWARD = 50; 
 
+	/**
+     * Enumeration representing shop items with their names and corresponding points.
+     */
 	public enum ShopItem {
 
 		ITEM1("LCBO Giftcard", 2000), ITEM2("Newspaper", 200), ITEM3("Costco Giftcard", 1000), ITEM4("Coffee", 100);
@@ -23,19 +36,41 @@ public class AccountsManager {
 			this.points = points;
 		}
 
+		/**
+         * Gets the name of the shop item.
+         *
+         * @return The name of the shop item.
+         */
 		public String getItemName() {
 			return itemName;
 		}
 
+		/**
+         * Gets the points required for the shop item.
+         *
+         * @return The points required for the shop item.
+         */
 		public int getPoints() {
 			return points;
 		}
 	}
 
+	/**
+     * Constructs an AccountsManager with an empty account list.
+     */
 	public AccountsManager() {
 		accountList = new ArrayList<Account>();
 	}
-	
+
+	/**
+     * Loads user accounts from the specified file.
+     *
+     * @param file 
+     * 		The file containing user account information.
+     * 
+     * @throws IOException 
+     * 		If an I/O error occurs.
+     */
 	public void loadAllAccounts(String file) throws IOException {
 		try {
 			// Variables 
@@ -63,20 +98,15 @@ public class AccountsManager {
 				
 				if (userHasItems) {
 					numItems = Integer.parseInt(accountReader.readLine());
-					
 					ArrayList<AccountsManager.ShopItem> purchasedItems = new ArrayList<>();
-
+					
 					for (int i = 0; i < numItems; i++) {
 						String currentItem = accountReader.readLine();
-
 						AccountsManager.ShopItem shopItem = AccountsManager.ShopItem.valueOf(currentItem);
 						purchasedItems.add(shopItem);
-						
 						currentAccount.setPurchasedItems(purchasedItems);
-
 					}
 				}
-				
 			}
 			accountReader.close();
 		} catch (FileNotFoundException e) {
@@ -89,9 +119,6 @@ public class AccountsManager {
 		}
 	}
 
-	
-	
-	
 	/**
      * Sets the account list.
      *
@@ -110,7 +137,18 @@ public class AccountsManager {
         return accountList;
     }
     
-
+    /**
+     * Checks the provided credentials against existing accounts.
+     *
+     * @param password 
+     * 		The password to check.
+     * 
+     * @param username 
+     * 		The username to check.
+     * 
+     * @return 
+     * 		True if the credentials are valid, false otherwise.
+     */
 	public boolean checkCredentials(String password, String username) {
 	    for (Account account : accountList) {
 	        if (account.getUsername().equals(username) && account.getPassword().equals(password)) {
@@ -120,7 +158,18 @@ public class AccountsManager {
 	    return false;
 	}
 	
-	
+	/**
+     * Creates a new account with the provided username and password.
+     *
+     * @param username 
+     * 		The username for the new account.
+     * 
+     * @param password 
+     * 		The password for the new account.
+     * 
+     * @throws IllegalArgumentException 
+     * 		If the provided username is already taken.
+     */
 	public void createNewAccount(String username, String password) {
 	    String[] allUserNames = new String[accountList.size()];
 	    for (int i = 0; i < accountList.size(); i++) {
@@ -133,10 +182,9 @@ public class AccountsManager {
 	    } else {
 	    	Account newAccount = new Account(username, password);
 	    	accountList.add(newAccount); 
-	    	newAccount.setAccountIndex(accountList.size());
+	    	newAccount.setAccountIndex(accountList.size() - 1);
 	    	newAccount.setUserHasItems(false);
 	    	newAccount.setPoints(0);
-	    	
 	    }
 		
 	}
@@ -156,8 +204,15 @@ public class AccountsManager {
         return -1; // Return -1 if the username is not found
     }
     
-
-
+    /**
+     * Finds the account index based on the provided username.
+     *
+     * @param username 
+     * 		The username to search for.
+     * 
+     * @return 
+     * 		The account index if the username is found, or -1 if not found.
+     */
 	public boolean findUserName(String[] allUserNames, String searchName, int left, int right) {
 		if (left > right) {
 			return false; // element not found
@@ -180,8 +235,11 @@ public class AccountsManager {
     /**
      * Gets the Account instance for the given account index.
      *
-     * @param accountIndex The index of the account.
-     * @return The Account instance if the index is valid, or null if not found.
+     * @param accountIndex 
+     * 		The index of the account.
+     * 
+     * @return 
+     * 		The Account instance if the index is valid, or null if not found.
      */
     public Account getAccountByIndex(int accountIndex) {
         try {
@@ -195,8 +253,11 @@ public class AccountsManager {
     /**
      * Retrieves a ShopItem based on its name.
      *
-     * @param itemName The name of the ShopItem.
-     * @return The ShopItem with the specified name, or null if not found.
+     * @param itemName 
+     * 		The name of the ShopItem.
+     * 
+     * @return 
+     * 		The ShopItem with the specified name, or null if not found.
      */
     public ShopItem getShopItemByName(String itemName) {
         for (ShopItem shopItem : ShopItem.values()) {
@@ -209,29 +270,45 @@ public class AccountsManager {
     
     
 
-
+    /**
+     * Redeems a shop item for the specified account if the account has enough points.
+     *
+     * @param item         
+     * 		The shop item to redeem.
+     * 
+     * @param 
+     * 		accountIndex The index of the account attempting the redemption.
+     * 
+     * @return
+     * 		True if the redemption is successful, false if the account has insufficient points.
+     */
     public boolean redeemItem(ShopItem item, int accountIndex) {
         Account currentAccount = accountList.get(accountIndex);
         int requiredPoints = item.getPoints();
 
         if (currentAccount.getPoints() >= requiredPoints) {
             currentAccount.setPoints(currentAccount.getPoints() - requiredPoints);
-            currentAccount.purchaseItem(item);
             return true; // Successful redemption
         } else {
             return false; // Insufficient points for redemption
         }
     }
 
+    /**
+     * Increases the loyalty points for the specified account based on the game outcome.
+     *
+     * @param win          
+     * 		True if the player won the game, false if they lost.
+     * 
+     * @param accountIndex 
+     * 		The index of the account to update.
+     */
     public void incLoyaltyPoints(boolean win, int accountIndex) {
         Account currentAccount = accountList.get(accountIndex);
         if (win) {
-            currentAccount.setPoints(currentAccount.getPoints() + 100);
+            currentAccount.setPoints(currentAccount.getPoints() + WIN_REWARD);
         } else {
-            currentAccount.setPoints(currentAccount.getPoints() + 50);
+            currentAccount.setPoints(currentAccount.getPoints() + LOOSE_REWARD);
         }
     }
-	
-	
-
 }

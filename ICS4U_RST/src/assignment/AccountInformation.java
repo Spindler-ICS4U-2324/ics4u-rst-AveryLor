@@ -10,22 +10,21 @@ import java.io.FileNotFoundException;
 
 /**
  * @author s453512 
- * Date: 2023-11-24 
+ * Date: 2024-01-08 
  * AccountInformation.java 
  * Utility class that saves all the information to a file of the user's choice once the program has finished. 
  */
 
 public class AccountInformation { // Utility class, the sole method is static (hence why there is no constructor) 
 
-
-	
 	/**
 	 * Saves all account information to a specified file.
 	 *
-	 * @param file        The path of the file to which the information will be
-	 *                    saved.
+	 * @param file        
+	 * 		The path of the file to which the information will be saved.
 	 * 
-	 * @param accountInfo The list of accounts whose information needs to be saved.
+	 * @param accountInfo 
+	 * 		The list of accounts whose information needs to be saved.
 	 * 
 	 * @throws FileNotFoundException 
 	 * 		If the specified file cannot be found or created.
@@ -70,8 +69,7 @@ public class AccountInformation { // Utility class, the sole method is static (h
 			e.printStackTrace();
 		} catch (IOException a) { // Handles the IOException
 			a.printStackTrace();
-		} // Again used the .printStackTrace() for the same reasons outlined in the
-			// PointsRecorder class
+		} 
 	}
 	
 	

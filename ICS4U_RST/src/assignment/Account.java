@@ -2,7 +2,7 @@ package assignment;
 
 /**
  * @author s453512 
- * Date: 2023-11-24 
+ * Date: 2024-01-08 
  * Account.java 
  * Class that defines the characteristics of an account 
  */
@@ -16,9 +16,8 @@ public class Account {
 	private String username; // First name of the account 
 	private String userPassword;  // Last name of the account 
 	private int accountIndex; // When instantiated each account is given an index. The PointsRecorder handles the assignment of accountIndex. 
-	private int userPoints; 
-
-	private boolean userHasItems;
+	private int userPoints; // User points 
+	private boolean userHasItems; // Does the user actually have items (used for checking files)
 	private ArrayList<AccountsManager.ShopItem> purchasedItems;
 	
 	 /**
@@ -28,6 +27,7 @@ public class Account {
 		// Basic constructor, sets all the necessary data fields to a value. 
 		username = "";
 		userPassword = "";
+		purchasedItems = new ArrayList<AccountsManager.ShopItem>();
 	}
 	
 	/**
@@ -45,6 +45,7 @@ public class Account {
 	public Account(String username, String userPassword) {
 		this.username = username; 
 		this.userPassword = userPassword;
+		purchasedItems = new ArrayList<AccountsManager.ShopItem>();
 	}
 	
 	/**
@@ -101,15 +102,23 @@ public class Account {
 		return accountIndex; 
 	}
  	
+	/**
+	 * Sets the points for the user.
+	 *
+	 * @param userPoints The points to set for the user.
+	 */
 	public void setPoints(int userPoints) {
 		this.userPoints = userPoints;
 	}
 	
+	/**
+	 * Retrieves the current points of the user.
+	 *
+	 * @return The current points of the user.
+	 */
 	public int getPoints() {
 		return userPoints; 
 	}
-	
-
 
 	/**
      * Sets whether the user has items.
@@ -138,39 +147,25 @@ public class Account {
     public ArrayList<AccountsManager.ShopItem> getPurchasedItems() {
         return purchasedItems;
     }
-    
-    /**
-     * Check if the specified item is already purchased.
-     *
-     * @param item The item to check.
-     * @return true if the item is already purchased, false otherwise.
-     */
-    private boolean isItemPurchased(AccountsManager.ShopItem item) {
-        return purchasedItems.contains(item);
-    }
+
 	
 	
 	/**
-     * Purchase the specified item and add it to the shopItems ArrayList.
-     *
-     * @param item The item to be purchased.
-     * @return true if the item is successfully purchased, false otherwise.
-     */
-    public boolean purchaseItem(AccountsManager.ShopItem item) {
-        // Check if the item is not already purchased
-        if (!isItemPurchased(item)) {
-            // Add the item to the shopItems ArrayList
-        	purchasedItems.add(item);
-            return true; // Successful purchase
-        } else {
-            return false; // Item is already purchased
-        }
-    }
+	 * Purchase the specified item and add it to the shopItems ArrayList.
+	 *
+	 * @param item The item to be purchased.
+	 * 
+	 */
+	public void purchaseItem(AccountsManager.ShopItem item) {
+		// Add the item to the shopItems ArrayList
+		purchasedItems.add(item);
+	}
     
     /**
      * Set the list of purchased items for the account.
      *
-     * @param purchasedItemsList The list of purchased items.
+     * @param purchasedItemsList 
+     * 		The list of purchased items.
      */
     public void setPurchasedItems(ArrayList<AccountsManager.ShopItem> purchasedItemsList) {
         this.purchasedItems = purchasedItemsList;

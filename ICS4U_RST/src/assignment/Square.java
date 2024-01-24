@@ -1,5 +1,12 @@
 package assignment;
 
+/**
+ * @author s453512 
+ * Date: 2024-01-08 
+ * Square.java 
+ * Class that defines a Square javaFX component 
+ */
+
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,14 +33,14 @@ public class Square extends Button {
 	public static final int GREEN_VALUE = 2; 
 	public static final int GRAY_VALUE = 3; 
 
-	
 	// Fields
-
 	private Label letterLabel;
-
 	private char letter;
 	private int value; 
 
+	 /**
+     * Constructs a Square with initial values.
+     */
 	public Square() {
 		value = BLANK_VALUE; 
 		letter = BLANK; 
@@ -53,12 +60,19 @@ public class Square extends Button {
 		stackPane.getChildren().addAll(imageView, letterLabel);
 		setGraphic(stackPane);
 	}
-
-
+	
+	 /**
+     * Gets the value associated with the square.
+     *
+     * @return The value of the square.
+     */
 	public int getValue() {
 		return value;
 	}
 
+	/**
+     * Clears the square by setting its letter to blank.
+     */
 	public void clear() {
 		letter = BLANK; // Reset the value to BLANK
 		
@@ -80,6 +94,9 @@ public class Square extends Button {
 		setGraphic(new ImageView(IMG_BLANK)); // Set the graphic to the blank image
 	}
 
+	/**
+     * Sets the square to display a green image.
+     */
 	public void setGreen() {
 		value = GREEN_VALUE; 
 		StackPane stackPane = new StackPane();
@@ -101,6 +118,9 @@ public class Square extends Button {
 		
 	}
 
+	/**
+     * Sets the square to display a yellow image.
+     */
 	public void setYellow() {
 		value = YELLOW_VALUE; 
 		StackPane stackPane = new StackPane();
@@ -120,6 +140,9 @@ public class Square extends Button {
 		setGraphic(stackPane);
 	}
 
+	/**
+     * Sets the square to display a gray image.
+     */
 	public void setGray() {
 		
 		StackPane stackPane = new StackPane();
@@ -139,35 +162,48 @@ public class Square extends Button {
 		setGraphic(stackPane);
 		
 	}
+	
+	/**
+     * Sets the square to display a blank image.
+     */
+    public void setBlank() {
+        letter = BLANK;
 
-	public void setBlank() {
-		letter = BLANK;
-		
-		StackPane stackPane = new StackPane();
-		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
+        StackPane stackPane = new StackPane();
+        stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
 
-		// Create the ImageView and Label
-		ImageView imageView = new ImageView(IMG_BLANK);
-		imageView.setFitWidth(SQUARE_SIZE);
-		imageView.setFitHeight(SQUARE_SIZE);
+        // Create the ImageView and Label
+        ImageView imageView = new ImageView(IMG_BLANK);
+        imageView.setFitWidth(SQUARE_SIZE);
+        imageView.setFitHeight(SQUARE_SIZE);
 
-		letterLabel = new Label();
-		letterLabel.setFont(Font.font(FONT));
-		letterLabel.setText(String.valueOf(letter));
+        letterLabel = new Label();
+        letterLabel.setFont(Font.font(FONT));
+        letterLabel.setText(String.valueOf(letter));
 
-		// Add the ImageView and Label to the StackPane
-		stackPane.getChildren().addAll(imageView, letterLabel);
-		setGraphic(stackPane);
-		
-		setGraphic(new ImageView(IMG_BLANK));
+        // Add the ImageView and Label to the StackPane
+        stackPane.getChildren().addAll(imageView, letterLabel);
+        setGraphic(stackPane);
 
-	}
+        setGraphic(new ImageView(IMG_BLANK));
+    }
 
+
+	/**
+     * Sets the letter of the square.
+     *
+     * @param letter The letter to set.
+     */
 	public void setLetter(char letter) {
 		this.letter = letter; 
 		letterLabel.setText(String.valueOf(letter));
 	}
 	
+	/**
+     * Gets the letter of the square.
+     *
+     * @return The letter of the square.
+     */
 	public char getLetter() {
 		return letter; 
 	}

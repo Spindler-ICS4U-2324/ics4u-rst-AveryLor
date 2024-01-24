@@ -370,6 +370,9 @@ public class NYTimesFX extends Application {
 
 	// Points Redemption Shop Scene 
 	private Scene getPointsRedemptionShopScene() {
+		// Initially no item is selected
+		selectedItem = null; 
+		
 		// Initializing scene constraints 
 		GridPane redemptionRoot = new GridPane();
 		redemptionRoot.setHgap(GAP);
@@ -582,7 +585,7 @@ public class NYTimesFX extends Application {
 	// The Wordle Scene 
 	private Scene getWordleScene() {
 		// Instantiating the WordleFX scene and resetting important variables 
-		wordleGame = new WordleFX();
+		wordleGame = new WordleFX(); // This sets the keyword as a result
 		numFullGuesses = 0; // No guesses made yet 
 		gameEnded = false; // The game has not ended yet 
 

@@ -28,7 +28,7 @@ public class WordleFX {
      * Constructs a new WordleFX instance with a randomly generated keyword.
      */
 	public WordleFX() {
-		keyword = WordleFX.generateKeyword(); // Keyword is generated and set 
+		keyword = WordleFX.generateKeyword(); // Keyword is generated and set, therefore, whenever the class is instantiated the keywrod is set
 		setKeyword(keyword); 
 	}
 	

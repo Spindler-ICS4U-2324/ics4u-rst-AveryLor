@@ -25,9 +25,10 @@ public class Square extends Button {
 	private static final int FONT = 20;
 	private static final int SQUARE_SIZE = 60; 
 
-	// Corresponding values for the images
+	// Blank character 
 	public static final char BLANK = ' ';
 	
+	// Integer constants representing the color of the Square 
 	public static final int BLANK_VALUE = 0; 
 	public static final int YELLOW_VALUE = 1; 
 	public static final int GREEN_VALUE = 2; 
@@ -42,18 +43,19 @@ public class Square extends Button {
      * Constructs a Square with initial values.
      */
 	public Square() {
+		// Setting the value and letter to initially blank 
 		value = BLANK_VALUE; 
 		letter = BLANK; 
-		// Create a StackPane to hold the imageView and letterLabel
+		
+		// Creating a StackPane to hold the imageView and letterLabel
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
 
-		// Create the ImageView and Label
+		// Creating the ImageView and Label
 		ImageView imageView = new ImageView(IMG_BLANK);
 		imageView.setFitWidth(SQUARE_SIZE);
 		imageView.setFitHeight(SQUARE_SIZE);
-
-		letterLabel = new Label();
+		letterLabel = new Label(); // Label holding the character
 		letterLabel.setFont(Font.font(FONT));
 
 		// Add the ImageView and Label to the StackPane
@@ -83,14 +85,12 @@ public class Square extends Button {
 		ImageView imageView = new ImageView(IMG_BLANK);
 		imageView.setFitWidth(SQUARE_SIZE);
 		imageView.setFitHeight(SQUARE_SIZE);
-
-		letterLabel = new Label();
+		letterLabel = new Label(); // Label holding the character 
 		letterLabel.setFont(Font.font(FONT));
 
 		// Add the ImageView and Label to the StackPane
 		stackPane.getChildren().addAll(imageView, letterLabel);
 		setGraphic(stackPane);
-		
 		setGraphic(new ImageView(IMG_BLANK)); // Set the graphic to the blank image
 	}
 
@@ -98,7 +98,7 @@ public class Square extends Button {
      * Sets the square to display a green image.
      */
 	public void setGreen() {
-		value = GREEN_VALUE; 
+		value = GREEN_VALUE; // Setting the integer value to GREEN_VALUE 
 		StackPane stackPane = new StackPane();
 		stackPane.setAlignment(Pos.CENTER); // Set the alignment of the StackPane to CENTER
 
@@ -106,14 +106,12 @@ public class Square extends Button {
 		ImageView imageView = new ImageView(IMG_GREEN);
 		imageView.setFitWidth(SQUARE_SIZE);
 		imageView.setFitHeight(SQUARE_SIZE);
-
-		letterLabel = new Label();
+		letterLabel = new Label(); // Label holding the character
 		letterLabel.setFont(Font.font(FONT));
 		letterLabel.setText(String.valueOf(letter));
 
 		// Add the ImageView and Label to the StackPane
 		stackPane.getChildren().addAll(imageView, letterLabel);
-		
 		setGraphic(stackPane);
 		
 	}

@@ -1,5 +1,7 @@
-# ICS4U RST: Final Software Project
+ICS4U Final Software Project: Wordle Rendition
+This project was developed as part of the final assessment for the ICS4U course.
 
-The following is a project that I made for my ICS4U final. 
+It is a reimagining of the classic Wordle game, featuring enhanced functionality such as:
 
-It is a rendition of the classic Wordle game with added shop features and a system that tracks users. 
+A built-in shop system.
+User tracking and management capabilities.
